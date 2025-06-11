@@ -1,89 +1,72 @@
-print("Hello World!")
+import products as prods
+from tkinter import *
+
+root = Tk()
 
 basic_resources = ("Salvage", "Coal", "Sulfur")
 
-class Coke:
-    cost = {
-        "Coal": 1.21
-    }
-
-class Cmat:
-    cost = {
-        "salvage": 5
-    }
-
-class A1:
-    cost = {
-        "Salvage": 15,
-        "Coke": 75
-    }
-    @classmethod
-    def total_coal(cls):
-        # Get total coal from Coke class
-        total_coal = cls.cost["Coke"] * Coke.cost["Coal"]
-        return total_coal
-
-class A2:
-    pass
-
-class A3:
-    cost = {
-        "Cmat": 3,
-        "Sulfur": 20
-    }
-    @classmethod
-    def total_salvage(cls):
-        # Get total salvage from Cmat class
-        total_salvage = cls.cost["Cmat"] * Cmat.cost["salvage"]
-        return total_salvage
-
-class A4:
-    pass
-
-class A5:
-    pass
-
-class PCmat:
-    cost = {
-        "Cmat": 15,
-        "Salvage": 25 # this is a innacurate value, in place of 'metal beam'
-    }
-
-    @classmethod
-    def total_salvage(cls):
-        # Get Salvage from Cmat class
-        cmat_salvage = Cmat.cost["salvage"]
-        # Add own salvage
-        total = cls.cost["Salvage"] + (cmat_salvage * cls.cost["Cmat"])
-        return total
+# initializing products
+Outlaw = prods.Outlaw
+Skycaller = prods.Skycaller
+SPG = prods.SPG
 
 
+Products = {
+    "Outlaw": Outlaw,
+    "Skycaller": Skycaller,
+    "SPG": SPG
+}
+list_of_products = list(Products.keys())
+def main_loop():
+    while True:
+        calcList = dict()
+        print("Available vehicles: Outlaw, Skycaller, SPG")
 
-class Skycaller:
-    cost = {
-        "PCmat": 10,
-        "A1": 10,
-        "A3": 8
-    }
+        while True:
+            print("type: 'next' to skip to next category")
+            choice = input(f"Choose a vehicle {list_of_products}: ").strip()
+            if choice not in list_of_products and choice != 'next':
+                # If the choice is not in the list of products, prompt again
+                print(f"Invalid choice. Please choose from {list_of_products}.")
+                continue
+            pick_number = input(f"How many {choice} do you want to build? ")
+            if choice in Products:
+                calcList[choice] = int(pick_number)
+                print(f"You chose: {pick_number} {choice}")
+            elif choice == 'next' or pick_number == 'next':
+                break
+            else:
+                print("Invalid choice. Please choose either 'Outlaw' or 'Skycaller'.")
+                continue
+        print("Calculating resources needed...")
+        print(calcList)
 
-    @classmethod
-    def total_basic_resources(cls):
-        # Get total salvage from PCmat
-        pc_total_salvage = PCmat.total_salvage() * cls.cost["PCmat"]
-        # Get total coal from A1
-        a1_total_coal = A1.total_coal()
-        # Get total sulfur from A3
-        a3_total_sulfur = A3.cost["Sulfur"]
+        # calculate the total resources needed
+        for product_name, amount in calcList.items():
+            product_class = Products[product_name]
+            if hasattr(product_class, 'total_basic_resources'):
+                resources = product_class.total_basic_resources()
+                #multiply resources by amount
+                resources = {k: v * amount for k, v in resources.items()}
+                print(f"{product_name} x{amount}: {resources}")
+            else:
+                print(f"{product_name} x{amount}: No reource calculation")
+        break
 
-        # Calculate total basic resources
-        total_salvage = pc_total_salvage + A1.cost["Salvage"] * cls.cost["A1"] + A3.total_salvage() * cls.cost["A3"]
-        total_coal = a1_total_coal * cls.cost["A1"]
-        total_sulfur = a3_total_sulfur * cls.cost["A3"]
+#main_loop()
 
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Sulfur": total_sulfur
-        }
+# root window title and dimension
+root.title("Vehicle Resource Calculator")
+# Set geometry(widthxheight)
+root.geometry("400x400")
+# adding a label to the root window
+lbl = Label(root, text=f"Available vehicles: {', '.join(list_of_products)}")
+lbl.grid()
+# adding Entry Field
+#txt = Entry(root, width=20)
+#txt.grid(column=1,row=0)
 
-print(Skycaller.total_basic_resources())  # Testing the total_basic_resources method
+
+
+
+root.mainloop()
