@@ -1,4 +1,6 @@
-basic_resources = ("Salvage", "Coal", "Sulfur") # reminder of what the objects are breakdowned to
+basic_resources = ("Salvage", "Coal", "Sulfur", "Rare Metals") # reminder of what the objects are breakdowned to
+
+# TODO: unify materials
 
 class Coke:
     cost = {
@@ -31,7 +33,7 @@ class A1:
     def total_coal(cls):
         # Get total coal from Coke class
         total_coal = cls.cost["Coke"] * Coke.cost["Coal"]
-        return total_coal
+        return int(total_coal)
 
 class A2:
     cost = {
@@ -77,7 +79,7 @@ class Steel:
 
         return {
             "Salvage": total_salvage,
-            "Coal": total_coal,
+            "Coal": int(total_coal),
             "Sulfur": total_sulfur
         }
 
@@ -96,6 +98,39 @@ class A5:
 
         return {
             "Salvage": total_salvage,
-            "Coal": total_coal,
+            "Coal": int(total_coal),
             "Sulfur": total_sulfur
+        }
+    
+class RareAlloy:
+    cost = {
+        "Rare Metals": 20,
+        "PCmat": 5,
+        "Coke": 60
+    }
+    @classmethod
+    def total_basic_resources(cls):
+        total_salvage = cls.cost["PCmat"] * PCmat.total_salvage()
+        total_coal = cls.cost["Coke"] * Coke.cost["Coal"]
+
+        return {
+            "Salvage": total_salvage,
+            "Coal": int(total_coal),
+            "Rare Metals": RareAlloy.cost['Rare Metals']
+        }
+
+# Intermediate materials below
+
+
+class ThermalShielding:
+    cost = {
+        "Cmat": 2,
+        "A4": 5
+    }
+    @classmethod
+    def total_basic_resources(cls):
+        total_salvage = A4.total_salvage() * cls.cost["A4"] + Cmat.cost["Salvage"] * cls.cost["Cmat"]
+
+        return {
+            "Salvage": total_salvage
         }
