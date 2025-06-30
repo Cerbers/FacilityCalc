@@ -1,4 +1,5 @@
 import materials as mats
+from functions import iterate_andMultiply_keys
 # initializing materials
 Coke = mats.Coke
 Cmat = mats.Cmat
@@ -11,263 +12,125 @@ Steel = mats.Steel
 A5 = mats.A5
 Rare_Alloy = mats.RareAlloy
 Thermal = mats.ThermalShielding
+NavalPlate =mats.NavalShellPlating
+NavalHull = mats.NavalHullSegment
+ConstructionPart = mats.ConstructionPart
+StructurePart = mats.StructurePart
+StormCannonPart = mats.StormCannonPart
+IntelCenterPart = mats.IntelCenterPart
 
+mat_map = {
+    "Cmat": Cmat,
+    "PCmat": PCmat,
+    "A1": A1,
+    "A2": A2,
+    "A3": A3,
+    "A4": A4,
+    "A5": A5,
+    "Steel": Steel,
+    "RareAlloy": Rare_Alloy,
+    "Thermal": Thermal,
+    "NavalPlate": NavalPlate,
+    "NavalHull": NavalHull,
+    "CP": ConstructionPart,
+    "SP": StructurePart,
+    "SCP": StormCannonPart,
+    "ICP": IntelCenterPart
+}
 
-class Chieftain:
+class Prod:
+    cost = {}
+
+    @classmethod
+    def total_basic_resources(cls):
+            total = {}
+            for mat_name, qty in cls.cost.items():
+                mat = mat_map.get(mat_name) # Get the material object from mat_map
+                if hasattr(mat, "total_basic_resources"):
+                    # Recursively get the basic resources for this material
+                    resources = mat.total_basic_resources()
+                else:
+                    resources = {mat_name: 1}
+                # Multiply each resource by the quantity needed
+                iterate_andMultiply_keys(resources, total, qty)
+            return total
+
+class Chieftain(Prod):
     cost = {
         "PCmat": 5,
         "A1": 10,
         "A4": 8
     }
-    @classmethod
-    def total_basic_resources(cls):
-        pc_total_salvage = PCmat.total_salvage() * cls.cost["PCmat"]
-        a1_total_coal = A1.total_coal() * cls.cost["A1"]
-        a1_total_salvage = A1.cost["Salvage"] * cls.cost["A1"]
-        a4_total_salvage = A4.total_salvage() * cls.cost["A4"]
 
-        # Calculate total basic resources
-        total_salvage = pc_total_salvage + a1_total_salvage + a4_total_salvage
-        total_coal = a1_total_coal
-
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal
-        }
-
-class Thornfall:
+class Thornfall(Prod):
     cost = {
         "PCmat": 60,
         "A4": 15,
         "A3": 15,
         "A1": 10
     }
-    @classmethod
-    def total_basic_resources(cls):
-        pc_total_salvage = PCmat.total_salvage() * cls.cost["PCmat"]
-        a4_total_salvage = A4.total_salvage() * cls.cost["A4"]
-        a3_total_salvage = A3.total_salvage() * cls.cost["A3"]
-        a3_total_sulfur = A3.cost["Sulfur"] * cls.cost["A3"]
-        a1_total_coal = A1.total_coal() * cls.cost["A1"]
-        a1_total_salvage = A1.cost["Salvage"] * cls.cost["A1"]
 
-        # Calculate total basic resources
-        total_salvage = a4_total_salvage + a3_total_salvage + a1_total_salvage + pc_total_salvage
-        total_coal = a1_total_coal
-        total_sulfur = a3_total_sulfur
-
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Sulfur": total_sulfur
-        }
-
-class Outlaw:
+class Outlaw(Prod):
     cost = {
         "PCmat": 10,
         "A1": 10,
         "A4": 10
     }
-    @classmethod
-    def total_basic_resources(cls):
-        pc_total_salvage = PCmat.total_salvage() * cls.cost["PCmat"]
-        a1_total_coal = A1.total_coal() * cls.cost["A1"]
-        a1_total_salvage = A1.cost["Salvage"] * cls.cost["A1"]
-        a4_total_salvage = A4.total_salvage() * cls.cost["A4"]
 
-        # Calculate total basic resources
-        total_salvage = pc_total_salvage + a1_total_salvage + a4_total_salvage
-        total_coal = a1_total_coal
-
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal
-        }
-
-class Blinder:
+class Blinder(Prod):
     cost = {
         "PCmat": 5,
         "A2": 10,
         "A4": 3
     }
-    @classmethod
-    def total_basic_resources(cls):
-        pc_total_salvage = PCmat.total_salvage() * cls.cost["PCmat"]
-        a2_total_salvage = A2.cost["Salvage"] * cls.cost["A2"]
-        a4_total_salvage = A4.total_salvage() * cls.cost["A4"]
-        # Calculate total basic resources
-        total_salvage = pc_total_salvage + a2_total_salvage + a4_total_salvage
 
-        return {
-            "Salvage": total_salvage
-        }
-
-class RAC:
+class RAC(Prod):
     cost = {
         "PCmat": 35,
         "A1": 10,
         "A3": 8
     }
 
-    @classmethod
-    def total_basic_resources(cls):
-        pc_total_salvage = PCmat.total_salvage() * cls.cost["PCmat"]
-        a1_total_salvage = A1.cost["Salvage"] * cls.cost["A1"]
-        a1_total_coal = A1.total_coal() * cls.cost["A1"]
-        a3_total_salvage = A3.total_salvage() * cls.cost["A3"]
-        a3_total_sulfur = A3.cost["Sulfur"] * cls.cost["A3"]
-
-        # Calculate total basic resources
-        total_salvage = pc_total_salvage + a1_total_salvage + a3_total_salvage
-        total_coal = a1_total_coal
-        total_sulfur = a3_total_sulfur
-
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Sulfur": total_sulfur
-        }
-
-class Skycaller:
+class Skycaller(Prod):
     cost = {
         "PCmat": 10,
         "A1": 10,
         "A3": 8
     }
 
-    @classmethod
-    def total_basic_resources(cls):
-        pc_total_salvage = PCmat.total_salvage() * cls.cost["PCmat"]
-        a1_total_salvage = A1.cost["Salvage"] * cls.cost["A1"]
-        a1_total_coal = A1.total_coal() * cls.cost["A1"]
-        a3_total_salvage = A3.total_salvage() * cls.cost["A3"]
-        a3_total_sulfur = A3.cost["Sulfur"] * cls.cost["A3"]
-
-        # Calculate total basic resources
-        total_salvage = pc_total_salvage + a1_total_salvage + a3_total_salvage
-        total_coal = a1_total_coal
-        total_sulfur = a3_total_sulfur
-
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Sulfur": total_sulfur
-        }
-
-class KingJester:
+class KingJester(Prod):
     cost = {
         "Steel": 5,
         "A1": 15,
         "A3": 3,
         "RareAlloy": 1
     }
-    @classmethod
-    def total_basic_resources(cls):
-        steel_totals = Steel.total_basic_resources()
-        steel_total = {k: v * cls.cost["Steel"] for k, v in steel_totals.items()}
-        a1_total_coal = A1.total_coal() * cls.cost["A1"]
-        a1_total_salvage = A1.cost['Salvage'] * cls.cost['A1']
-        a3_total_sulfur = A3.cost['Sulfur'] * cls.cost['A3']
-        a3_total_salvage = A3.total_salvage() * cls.cost["A3"]
-        rare_totals = Rare_Alloy.total_basic_resources()
-        rare_total = {k: v * cls.cost['RareAlloy'] for k, v in rare_totals.items()}
 
-        total_salvage = steel_total['Salvage'] + a1_total_salvage + a3_total_salvage + rare_total['Salvage']
-        total_coal = steel_total["Coal"] + a1_total_coal + rare_total['Coal']
-        total_sulfur =  a3_total_sulfur + steel_total['Sulfur']
-        total_rares = rare_total['Rare Metals']
-
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Sulfur": total_sulfur,
-            "Rare Metals": total_rares
-        }
-
-class MG_BT:
+class MG_BT(Prod):
     cost = {
         "Steel": 50,
         "A5": 35,
         "A4": 60,
         "A3": 30
     }
-    @classmethod
-    def total_basic_resources(cls):
-        steel_totals = Steel.total_basic_resources()
-        steel_total = {k: v * cls.cost["Steel"] for k, v in steel_totals.items()}
-        a5_totals = A5.total_basic_resources()
-        a5_total = {k: v * cls.cost["A5"] for k, v in a5_totals.items()}
-        a4_total_salvage = A4.total_salvage() * cls.cost["A4"]
-        a3_total_salvage = A3.total_salvage() * cls.cost["A3"]
-        a3_total_sulfur = A3.cost["Sulfur"] * cls.cost["A3"]
 
-        # Calculate total basic resources
-        total_salvage = steel_total["Salvage"] + a5_total["Salvage"] + a4_total_salvage + a3_total_salvage
-        total_coal = steel_total["Coal"] + a5_total["Coal"]
-        total_sulfur = steel_total["Sulfur"] + a5_total.get("Sulfur", 0) + a3_total_sulfur
-
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Sulfur": total_sulfur
-        }
-
-class Flame_BT:
+class Flame_BT(Prod):
     cost = {
         "Steel": 40,
         "A5": 45,
         "A4": 30,
         "A3": 65
     }
-    @classmethod
-    def total_basic_resources(cls):
-        steel_totals = Steel.total_basic_resources()
-        steel_total = {k: v * cls.cost["Steel"] for k, v in steel_totals.items()}
-        a5_totals = A5.total_basic_resources()
-        a5_total = {k: v * cls.cost["A5"] for k, v in a5_totals.items()}
-        a4_total_salvage = A4.total_salvage() * cls.cost["A4"]
-        a3_total_salvage = A3.total_salvage() * cls.cost["A3"]
-        a3_total_sulfur = A3.cost["Sulfur"] * cls.cost["A3"]
 
-        # Calculate total basic resources
-        total_salvage = steel_total["Salvage"] + a5_total["Salvage"] + a4_total_salvage + a3_total_salvage
-        total_coal = steel_total["Coal"] + a5_total["Coal"]
-        total_sulfur = steel_total["Sulfur"] + a5_total.get("Sulfur", 0) + a3_total_sulfur
-
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Sulfur": total_sulfur
-        }
-
-class SPG:
+class SPG(Prod):
     cost = {
         "Steel": 150,
         "A5": 85,
         "A4": 40,
         "A3": 65
     }
-    @classmethod
-    def total_basic_resources(cls):
-        steel_totals = Steel.total_basic_resources()
-        steel_total = {k: v * cls.cost["Steel"] for k, v in steel_totals.items()}
-        a5_totals = A5.total_basic_resources()
-        a5_total = {k: v * cls.cost["A5"] for k, v in a5_totals.items()}
-        a4_total_salvage = A4.total_salvage() * cls.cost["A4"]
-        a3_total_salvage = A3.total_salvage() * cls.cost["A3"]
-        a3_total_sulfur = A3.cost["Sulfur"] * cls.cost["A3"]
 
-        # Calculate total basic resources
-        total_salvage = steel_total["Salvage"] + a5_total["Salvage"] + a4_total_salvage + a3_total_salvage
-        total_coal = steel_total["Coal"] + a5_total["Coal"]
-        total_sulfur = steel_total["Sulfur"] + a5_total.get("Sulfur", 0) + a3_total_sulfur
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Sulfur": total_sulfur
-        }
-
-class RSC:
+class RSC(Prod):
     cost = {
         "Steel": 285,
         "A5": 105,
@@ -276,75 +139,51 @@ class RSC:
         "RareAlloy": 100,
         "Thermal": 45
     }
-    @classmethod
-    def total_basic_resources(cls):
-        steel_totals = Steel.total_basic_resources()
-        steel_total = {k: v * cls.cost["Steel"] for k, v in steel_totals.items()}
-        a5_totals = A5.total_basic_resources()
-        a5_total = {k: v * cls.cost["A5"] for k, v in a5_totals.items()}
-        a4_total_salvage = A4.total_salvage() * cls.cost["A4"]
-        a3_total_salvage = A3.total_salvage() * cls.cost["A3"]
-        a3_total_sulfur = A3.cost["Sulfur"] * cls.cost["A3"]
-        rare_totals = Rare_Alloy.total_basic_resources()
-        rare_total = {k: v * cls.cost['RareAlloy'] for k, v in rare_totals.items()}
-        thermal_salvage = Thermal.total_basic_resources()
 
-        # Calculate total basic resources
-        total_salvage = steel_total["Salvage"] + a5_total["Salvage"] + a4_total_salvage + a3_total_salvage + rare_total['Salvage'] + thermal_salvage["Salvage"]
-        total_coal = steel_total["Coal"] + a5_total["Coal"] + rare_total['Coal']
-        total_sulfur = steel_total["Sulfur"] + a5_total.get("Sulfur", 0) + a3_total_sulfur
-        total_rares = rare_total['Rare Metals']
-
-        return {
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Sulfur": total_sulfur,
-            "Rare Metals": total_rares
-        }
-
-class ConcLargeStructure:
-    # default value to be overriden
+class StormCannon(Prod):
     cost = {
-        "PCmat": 1,
-        "RareAlloy": 1,
-        "Thermal": 1
-    }
-    @classmethod
-    def total_basic_resources(cls):
-        pc_total_salvage = PCmat.total_salvage() * cls.cost["PCmat"]
-        rare_totals = Rare_Alloy.total_basic_resources()
-        rare_total = {k: v * cls.cost['RareAlloy'] for k, v in rare_totals.items()}
-        thermal_salvage = Thermal.total_basic_resources()
-
-
-        total_salvage = pc_total_salvage + rare_total['Salvage'] + thermal_salvage["Salvage"]
-        total_coal = rare_total['Coal']
-        total_rares = rare_total['Rare Metals']
-
-        return{
-            "Salvage": total_salvage,
-            "Coal": total_coal,
-            "Rare Metals": total_rares
-        }
-
-class StormCannon(ConcLargeStructure):
-    cost = {
-        "PCmat": 300,
-        "RareAlloy": 40,
-        "Thermal": 45
+        "CP": 1,
+        "SP": 1,
+        "SCP": 1
     }
 
-class UndergroundFortress(ConcLargeStructure):
+class UndergroundFortress(Prod):
     cost = {
         "PCmat": 200,
         "RareAlloy": 5,
         "Thermal": 35
     }
 
-class IntelCenter(ConcLargeStructure):
+class IntelCenter(Prod):
     cost = {
-        "PCmat": 50,
-        "RareAlloy": 3,
-        "Thermal": 15
+        "CP": 1,
+        "SP": 1,
+        "ICP": 1
     }
 
+class Frigate(Prod):
+    cost = {
+        "NavalPlate": 12,
+        "NavalHull": 12
+    }
+
+class Sub(Prod):
+    cost = {
+        "NavalPlate": 15,
+        "NavalHull": 15
+    }
+
+class Bowhead(Prod):
+    cost = {
+        "NavalPlate": 12,
+        "NavalHull": 8
+    }
+
+class Longhook(Bowhead):
+    pass
+
+class Bluefin(Prod):
+    cost = {
+        "NavalPlate": 25,
+        "NavalHull": 25
+    }

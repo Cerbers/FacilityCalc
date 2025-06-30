@@ -7,7 +7,7 @@ sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]))
 from products import *
 from materials import *
 
-products = [Outlaw, Skycaller, RAC, Chieftain, Thornfall, KingJester, MG_BT, SPG, Blinder, Flame_BT, RSC, ConcLargeStructure]
+products = [Outlaw, Skycaller, RAC, Chieftain, Thornfall, KingJester, MG_BT, SPG, Blinder, Flame_BT, RSC]
 materilas = [A5, Steel, RareAlloy, ThermalShielding]
 
 def test_products_return_type():
