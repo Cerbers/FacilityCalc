@@ -1,6 +1,6 @@
 def iterate_and_multiply_keys(map: dict, result: dict, qty: int) -> dict:
     for k, v in map.items():
-            result[k] = result.get(k, 0) + int(v) * qty
+            result[k] = result.get(k, 0) + v * qty
     return result
 
 
