@@ -1,11 +1,5 @@
-# this method is more desirable
-import os, sys
-
-sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]))
-
-
-from products import *
-from materials import *
+from products import Outlaw, Skycaller, RAC, Chieftain, Thornfall, KingJester, MG_BT, SPG, Blinder, Flame_BT, RSC
+from materials import A5, Steel, RareAlloy, ThermalShielding
 
 products = [Outlaw, Skycaller, RAC, Chieftain, Thornfall, KingJester, MG_BT, SPG, Blinder, Flame_BT, RSC]
 materilas = [A5, Steel, RareAlloy, ThermalShielding]
@@ -23,3 +17,4 @@ def test_materials_return_type():
         assert isinstance(result, dict), f"{prod} did not return a dict"
         for k, v in result.items():
             assert isinstance(v, int), f"{prod}: {k} value is not int (got {type(v)})"
+

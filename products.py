@@ -1,5 +1,5 @@
 import materials as mats
-from functions import iterate_andMultiply_keys
+from functions import iterate_and_multiply_keys
 # initializing materials
 Coke = mats.Coke
 Cmat = mats.Cmat
@@ -19,24 +19,7 @@ StructurePart = mats.StructurePart
 StormCannonPart = mats.StormCannonPart
 IntelCenterPart = mats.IntelCenterPart
 
-mat_map = {
-    "Cmat": Cmat,
-    "PCmat": PCmat,
-    "A1": A1,
-    "A2": A2,
-    "A3": A3,
-    "A4": A4,
-    "A5": A5,
-    "Steel": Steel,
-    "RareAlloy": Rare_Alloy,
-    "Thermal": Thermal,
-    "NavalPlate": NavalPlate,
-    "NavalHull": NavalHull,
-    "CP": ConstructionPart,
-    "SP": StructurePart,
-    "SCP": StormCannonPart,
-    "ICP": IntelCenterPart
-}
+
 
 class Prod:
     cost = {}
@@ -45,14 +28,12 @@ class Prod:
     def total_basic_resources(cls):
             total = {}
             for mat_name, qty in cls.cost.items():
-                mat = mat_map.get(mat_name) # Get the material object from mat_map
+                mat = mats.materials_map.get(mat_name)
                 if hasattr(mat, "total_basic_resources"):
-                    # Recursively get the basic resources for this material
                     resources = mat.total_basic_resources()
                 else:
                     resources = {mat_name: 1}
-                # Multiply each resource by the quantity needed
-                iterate_andMultiply_keys(resources, total, qty)
+                iterate_and_multiply_keys(resources, total, qty)
             return total
 
 class Chieftain(Prod):

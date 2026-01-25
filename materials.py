@@ -1,40 +1,26 @@
 basic_resources = ("Salvage", "Coal", "Sulfur", "Rare Metals") # reminder of what the objects are breakdowned to
-from functions import iterate_andMultiply_keys
+from functions import iterate_and_multiply_keys
 
 
 class Material:
     cost = {}
+    
     @classmethod
     def total_basic_resources(cls):
             total = {}
             for mat_name, qty in cls.cost.items():
-                mat = mat_map.get(mat_name) # Get the material object from mat_map
+                mat = materials_map.get(mat_name)
                 if hasattr(mat, "total_basic_resources"):
-                    # Recursively get the basic resources for this material
                     resources = mat.total_basic_resources()
                 else:
                     resources = {mat_name: 1}
-                # Multiply each resource by the quantity needed
-                iterate_andMultiply_keys(resources, total, qty)
+                iterate_and_multiply_keys(resources, total, qty)
             return total
 
 class Coke(Material):
     cost = {
         "Coal": 1.21
     }
-    @classmethod
-    def total_basic_resources(cls):
-            total = {}
-            for mat_name, qty in cls.cost.items():
-                mat = mat_map.get(mat_name) # Get the material object from mat_map
-                if hasattr(mat, "total_basic_resources"):
-                    # Recursively get the basic resources for this material
-                    resources = mat.total_basic_resources()
-                else:
-                    resources = {mat_name: 1}
-                # Multiply each resource by the quantity needed
-                iterate_andMultiply_keys(resources, total, qty)
-            return total
 
 class Cmat(Material):
     cost = {
@@ -141,7 +127,7 @@ class IntelCenterPart(Material):
         "Thermal": 15
     }
 
-mat_map = {
+materials_map = {
     "Cmat": Cmat,
     "Coke": Coke,
     "PCmat": PCmat,

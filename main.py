@@ -1,5 +1,5 @@
 from products import *
-from functions import *
+from functions import pick_products, is_exit_key, user_nums, is_user_input_in_map, calculate_total_resources, get_mats
 # TODO: have user be able to have multiple instances of same object
 
 
@@ -30,6 +30,9 @@ list_of_products = list(Products.keys())
 users_map_of_products = dict()
 
 def main_loop():
+    print("Type 1 if you want to have total materials displayed too.\n>> ")
+    wants_mat_cost = input()
+
     while True:
         print("Type: 'done' to skip to start calculation or exit")
         choice = pick_products(list_of_products, lowercase_product_map)
@@ -40,17 +43,27 @@ def main_loop():
             break
         pick_number = user_nums(choice)
         if is_exit_key(pick_number):
-            break
-        if is_userInput_in_map(choice, Products):
+            break   
+        if is_user_input_in_map(choice, Products):
             users_map_of_products[choice] = pick_number
             print(f"You chose: {pick_number} {choice}")
         else:
-            print("something went wrong, exiting the loop")
+            print("Something went wrong, exiting the loop")
             break
+
     print(f"Calculating resources needed for {users_map_of_products}\n")
     total = calculate_total_resources(users_map_of_products, Products)
+
+    if wants_mat_cost == "1":
+        total_mats = get_mats(users_map_of_products, Products)
+    else:
+        total_mats = "N/A"
+    
     print("Total resources needed: ", total)
+    print("Total Facility Materials needed: ", total_mats)
+
 
 
 if __name__ == "__main__":
     main_loop()
+
