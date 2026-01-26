@@ -4,7 +4,7 @@ from products import (
     Outlaw, Chieftain, Thornfall, Blinder, Skycaller, RAC, KingJester, Flame_BT, MG_BT, SPG, 
     StormCannon, IntelCenter, UndergroundFortress, RSC, Sub, Frigate, Bluefin, Longhook, Bowhead, Prod
 )
-from functions import pick_products, is_exit_key, user_nums, is_user_input_in_map, calculate_total_resources, get_mats
+from functions import pick_products, is_exit_key, get_build_quantity, is_user_input_in_map, calculate_total_resources, get_materials
 # TODO: have user be able to have multiple instances of same object
 
 
@@ -46,17 +46,8 @@ def main_loop() -> None:
             continue
         if is_exit_key(choice):
             break
-        # pick_number is int, but is_exit_key expects str. 
-        # user_nums returns int. 
-        # Logic issue here: user_nums handles its own input loop but returns int.
-        # If user types "done" in user_nums, user_nums will raise ValueError or loop.
-        # The original code `if is_exit_key(pick_number):` implies pick_number could be str?
-        # Looking at functions.py, user_nums always returns int or recurses.
-        # So `is_exit_key(pick_number)` is type error and logic error.
-        pick_number = user_nums(choice)
+        pick_number = get_build_quantity(choice)
         
-        # Checking logic: user_nums doesn't return 'done'.
-        # Removing the is_exit_key check on pick_number as it's unreachable/incorrect type.
         
         if is_user_input_in_map(choice, Products):
             users_map_of_products[choice] = pick_number
@@ -70,7 +61,7 @@ def main_loop() -> None:
 
     total_mats: Union[dict[str, float], str]
     if wants_mat_cost == "1":
-        total_mats = get_mats(users_map_of_products, Products)
+        total_mats = get_materials(users_map_of_products, Products)
     else:
         total_mats = "N/A"
     

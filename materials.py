@@ -1,4 +1,4 @@
-from typing import Any, Type, Dict
+from typing import Any, Type
 from functions import iterate_and_multiply_keys
 
 basic_resources: tuple[str, ...] = ("Salvage", "Coal", "Sulfur", "Rare Metals") # reminder of what the objects are breakdowned to
@@ -130,7 +130,7 @@ class IntelCenterPart(Material):
         "Thermal": 15.0
     }
 
-materials_map: Dict[str, Type[Material]] = {
+materials_map: dict[str, Type[Material]] = {
     "Cmat": Cmat,
     "Coke": Coke,
     "PCmat": PCmat,

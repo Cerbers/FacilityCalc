@@ -19,13 +19,13 @@ def is_exit_key(inp: str) -> bool:
     return inp == "done"
 
 
-def user_nums(x: str) -> int:
+def get_build_quantity(product_name: str) -> int:
     try:
-        quantity = int(input(f"How many {x} do you want to build?\n>> "))
+        quantity = int(input(f"How many {product_name} do you want to build?\n>> "))
         return quantity
     except ValueError:
         print("Not a number, type a number.\n")
-        return user_nums(x)
+        return get_build_quantity(product_name)
 
 
 def is_user_input_in_map(x: str, data_map: dict[str, Any]) -> bool:
@@ -57,13 +57,13 @@ def sum_resources_from_each_product(data_map: dict[str, float], ref: dict[str, f
     return last_val
 
 
-def get_mats(users_map_of_products: dict[str, int], Products: dict[str, Any]) -> dict[str, float]:
+def get_materials(users_map_of_products: dict[str, int], Products: dict[str, Any]) -> dict[str, float]:
     total: dict[str, float] = dict() 
     # iterate over products picked by user and get their true key
     for product_name, amount in users_map_of_products.items():
         product_picked = Products[product_name]
         if hasattr(product_picked, 'cost'):
-            materials: Dict[str, float] = product_picked.cost
+            materials: dict[str, float] = product_picked.cost
             materials = {k: v * amount for k, v in materials.items()}
             print(f"{product_name} x{amount}: {materials}\n")
             sum_resources_from_each_product(materials, total)
