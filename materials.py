@@ -1,19 +1,22 @@
-basic_resources = ("Salvage", "Coal", "Sulfur", "Rare Metals") # reminder of what the objects are breakdowned to
+from typing import Any, Type, Dict
 from functions import iterate_and_multiply_keys
 
+basic_resources: tuple[str, ...] = ("Salvage", "Coal", "Sulfur", "Rare Metals") # reminder of what the objects are breakdowned to
 
 class Material:
-    cost = {}
+    cost: dict[str, float] = {}
     
     @classmethod
-    def total_basic_resources(cls):
-            total = {}
+    def total_basic_resources(cls) -> dict[str, float]:
+            if not cls.cost:
+                raise ValueError(f"No attributies in cost dictionary in {cls.__name__}")
+            total: dict[str, float] = {}
             for mat_name, qty in cls.cost.items():
                 mat = materials_map.get(mat_name)
-                if hasattr(mat, "total_basic_resources"):
+                if mat and hasattr(mat, "total_basic_resources"):
                     resources = mat.total_basic_resources()
                 else:
-                    resources = {mat_name: 1}
+                    resources = {mat_name: 1.0}
                 iterate_and_multiply_keys(resources, total, qty)
             return total
 
@@ -24,110 +27,110 @@ class Coke(Material):
 
 class Cmat(Material):
     cost = {
-        "Salvage": 5
+        "Salvage": 5.0
     }
 
 class PCmat(Material):
     cost = {
-        "Cmat": 15,
-        "Salvage": 25 # this is a innacurate value, in place of 'metal beam'
+        "Cmat": 15.0,
+        "Salvage": 25.0 # this is a innacurate value, in place of 'metal beam'
     }
 
 class A1(Material):
     cost = {
-        "Salvage": 15,
-        "Coke": 75
+        "Salvage": 15.0,
+        "Coke": 75.0
     }
 
 class A2(Material):
     cost = {
-        "Salvage": 15
+        "Salvage": 15.0
     }
 
 class A3(Material):
     cost = {
-        "Cmat": 3,
-        "Sulfur": 20
+        "Cmat": 3.0,
+        "Sulfur": 20.0
     }
 
 class A4(Material):
     cost = {
-        "PCmat": 1
+        "PCmat": 1.0
     }
 
 class Steel(Material):
     cost = {
-        "PCmat": 3,
-        "Coke": 125,
-        "Sulfur": 60
+        "PCmat": 3.0,
+        "Coke": 125.0,
+        "Sulfur": 60.0
     }
 
 class A5(Material):
     cost = {
-        "Steel": 3,
-        "Coke": 245,
-        "A1": 10,
-        "A2": 10
+        "Steel": 3.0,
+        "Coke": 245.0,
+        "A1": 10.0,
+        "A2": 10.0
     }
     
 class RareAlloy(Material):
     cost = {
-        "Rare Metals": 20,
-        "PCmat": 5,
-        "Coke": 60
+        "Rare Metals": 20.0,
+        "PCmat": 5.0,
+        "Coke": 60.0
     }
 
 class ThermalShielding(Material):
     cost = {
-        "Cmat": 2,
-        "A4": 5
+        "Cmat": 2.0,
+        "A4": 5.0
     }
 
 class NavalShellPlating(Material):
     cost = {
-        "Cmat": 2,
-        "Thermal": 1
+        "Cmat": 2.0,
+        "Thermal": 1.0
     }
 
 class NavalHullSegment(Material):
     cost = {
-        "PCmat": 60,
-        "A1": 2,
-        "A2": 2,
-        "A4": 10,
-        "RareAlloy":4,
-        "Thermal": 4
+        "PCmat": 60.0,
+        "A1": 2.0,
+        "A2": 2.0,
+        "A4": 10.0,
+        "RareAlloy": 4.0,
+        "Thermal": 4.0
     }
 
 class ConstructionPart(Material):
     cost = {
-        "PCmat": 250,
-        "A1": 225,
-        "A2": 225
+        "PCmat": 250.0,
+        "A1": 225.0,
+        "A2": 225.0
     }
 
 class StructurePart(Material):
     cost = {
-        "PCmat": 50,
-        "A4": 40,
-        "Thermal": 15
+        "PCmat": 50.0,
+        "A4": 40.0,
+        "Thermal": 15.0
     }
 
 class StormCannonPart(Material):
     cost = {
-        "PCmat": 300,
-        "RareAlloy": 40,
-        "Thermal": 45
+        "PCmat": 300.0,
+        "RareAlloy": 40.0,
+        "Thermal": 45.0
     }
 
 class IntelCenterPart(Material):
     cost = {
-        "PCmat": 50,
-        "RareAlloy": 3,
-        "Thermal": 15
+        "PCmat": 50.0,
+        "RareAlloy": 3.0,
+        "Thermal": 15.0
     }
 
-materials_map = {
+materials_map: Dict[str, Type[Material]] = {
     "Cmat": Cmat,
     "Coke": Coke,
     "PCmat": PCmat,

@@ -1,23 +1,25 @@
-def iterate_and_multiply_keys(map: dict, result: dict, qty: int) -> dict:
-    for k, v in map.items():
-            result[k] = result.get(k, 0) + v * qty
+from typing import Any, Union
+
+def iterate_and_multiply_keys(data_map: dict[str, float], result: dict[str, float], qty: Union[int, float]) -> dict[str, float]:
+    for k, v in data_map.items():
+            result[k] = result.get(k, 0.0) + v * qty
     return result
 
 
-def pick_products(list: list, map: dict):
-    user_input = input(f"Choose a vehicle {list}: \n>> ").strip()
+def pick_products(options_list: list[str], data_map: dict[str, str]) -> str:
+    user_input = input(f"Choose a vehicle {options_list}: \n>> ").strip()
     # take user input string and make it lower case then call the lowercase dict to invoke the correct KEY
-    key = map.get(user_input.lower())
+    key = data_map.get(user_input.lower())
     if key:
         return key  # Return the correctly cased product name
     return user_input
 
 
-def is_exit_key(inp: str):
+def is_exit_key(inp: str) -> bool:
     return inp == "done"
 
 
-def user_nums(x: int) -> int:
+def user_nums(x: str) -> int:
     try:
         quantity = int(input(f"How many {x} do you want to build?\n>> "))
         return quantity
@@ -26,18 +28,18 @@ def user_nums(x: int) -> int:
         return user_nums(x)
 
 
-def is_user_input_in_map(x, map):
-    return x in map
+def is_user_input_in_map(x: str, data_map: dict[str, Any]) -> bool:
+    return x in data_map
 
 
-def calculate_total_resources(users_map_of_products: dict, Products: dict) -> dict:
-    total = dict() 
+def calculate_total_resources(users_map_of_products: dict[str, int], Products: dict[str, Any]) -> dict[str, float]:
+    total: dict[str, float] = dict() 
     # iterate over products picked by user and get their true key
     for product_name, amount in users_map_of_products.items():
         product_picked = Products[product_name]
         if hasattr(product_picked, 'total_basic_resources'):
             # throws the return of the method in resources
-            resources = product_picked.total_basic_resources()
+            resources: dict[str, float] = product_picked.total_basic_resources()
             # multiplies each value by set amount in users_map value
             resources = {k: v * amount for k, v in resources.items()}
             print(f"{product_name} x{amount}: {resources}\n")
@@ -45,19 +47,23 @@ def calculate_total_resources(users_map_of_products: dict, Products: dict) -> di
     return total
 
 
-def sum_resources_from_each_product(map, ref):
-    for k, v in map.items():
-        ref[k] = ref.get(k, 0) + v
-    return ref[k]
+def sum_resources_from_each_product(data_map: dict[str, float], ref: dict[str, float]) -> float:
+    # This function seems to return the last value, which is odd, but keeping logic consistent.
+    # It modifies ref in place.
+    last_val = 0.0
+    for k, v in data_map.items():
+        ref[k] = ref.get(k, 0.0) + v
+        last_val = ref[k]
+    return last_val
 
 
-def get_mats(users_map_of_products, Products):
-    total = dict() 
+def get_mats(users_map_of_products: dict[str, int], Products: dict[str, Any]) -> dict[str, float]:
+    total: dict[str, float] = dict() 
     # iterate over products picked by user and get their true key
     for product_name, amount in users_map_of_products.items():
         product_picked = Products[product_name]
         if hasattr(product_picked, 'cost'):
-            materials = product_picked.cost
+            materials: Dict[str, float] = product_picked.cost
             materials = {k: v * amount for k, v in materials.items()}
             print(f"{product_name} x{amount}: {materials}\n")
             sum_resources_from_each_product(materials, total)
