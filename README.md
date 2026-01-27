@@ -19,7 +19,13 @@ python main.py
 ## Available Products
 
 Warden:
-Outlaw, Chieftain, Thornfall, ATHT, Skycaller, RAC, King Jester, Flame BT, MG BT, SPG, RSC, S(torm)C(canon), I(ntelligence)C(enter), U(nderground)F(ortress), Sub, Frigate, Bluefin, Longhook, Bowhead
+Outlaw, Chieftain, Thornfall, ATHT, Skycaller, RAC, King Jester, Flame BT, MG BT, SPG, Nakki, Frigate, Firebrand
+
+Colonial:
+none present yet
+
+Faction Neutral:
+Bluefin, Longhook, Bowhead, RSC, SC, IC, UF
 
 ## Development
 

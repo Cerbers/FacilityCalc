@@ -85,7 +85,7 @@ class Skycaller(Prod):
         "A3": 8.0
     }
 
-class KingJester(Prod):
+class King_Jester(Prod):
     cost = {
         "Steel": 5.0,
         "A1": 15.0,
@@ -154,10 +154,17 @@ class Frigate(Prod):
         "NavalHull": 12.0
     }
 
-class Sub(Prod):
+class Warden_Submarine(Prod):
     cost = {
         "NavalPlate": 15.0,
         "NavalHull": 15.0
+    }
+
+class Firebrand(Prod):
+    cost = {
+        "PCmat": 15.0,
+        "A2": 10.0,
+        "A3": 15.0
     }
 
 class Bowhead(Prod):

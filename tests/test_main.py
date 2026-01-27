@@ -3,9 +3,9 @@ from unittest.mock import patch, MagicMock
 from typing import Type
 
 from products import (
-    Outlaw, Chieftain, Thornfall, Blinder, Skycaller, RAC, KingJester,
+    Outlaw, Chieftain, Thornfall, Blinder, Skycaller, RAC, King_Jester,
     Flame_BT, MG_BT, SPG, StormCannon, IntelCenter, UndergroundFortress,
-    RSC, Sub, Frigate, Bluefin, Longhook, Bowhead, Prod
+    RSC, Warden_Submarine, Frigate, Bluefin, Longhook, Bowhead, Prod, Firebrand
 )
 from main import Products, lowercase_product_map, list_of_products
 
@@ -16,7 +16,7 @@ class TestProductsDictionary:
         expected_keys = [
             "Outlaw", "Chieftain", "Thornfall", "ATHT", "Skycaller", "RAC",
             "King Jester", "Flame BT", "MG BT", "SPG", "SC", "IC", "UF",
-            "RSC", "Sub", "Frigate", "Bluefin", "Longhook", "Bowhead"
+            "RSC", "Nakki", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand"
         ]
         for key in expected_keys:
             assert key in Products, f"Missing product: {key}"
@@ -28,7 +28,7 @@ class TestProductsDictionary:
         assert Products["ATHT"] is Blinder
         assert Products["Skycaller"] is Skycaller
         assert Products["RAC"] is RAC
-        assert Products["King Jester"] is KingJester
+        assert Products["King Jester"] is King_Jester
         assert Products["Flame BT"] is Flame_BT
         assert Products["MG BT"] is MG_BT
         assert Products["SPG"] is SPG
@@ -36,11 +36,12 @@ class TestProductsDictionary:
         assert Products["IC"] is IntelCenter
         assert Products["UF"] is UndergroundFortress
         assert Products["RSC"] is RSC
-        assert Products["Sub"] is Sub
+        assert Products["Nakki"] is Warden_Submarine
         assert Products["Frigate"] is Frigate
         assert Products["Bluefin"] is Bluefin
         assert Products["Longhook"] is Longhook
         assert Products["Bowhead"] is Bowhead
+        assert Products["Firebrand"] is Firebrand
 
     def test_all_products_are_prod_subclasses(self) -> None:
         for name, product_class in Products.items():

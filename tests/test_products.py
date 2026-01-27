@@ -1,9 +1,9 @@
 import pytest
 from products import (
     Prod, Chieftain, Thornfall, Outlaw, Blinder, RAC, Skycaller,
-    KingJester, MG_BT, Flame_BT, SPG, RSC, StormCannon,
-    UndergroundFortress, IntelCenter, Frigate, Sub, Bowhead,
-    Longhook, Bluefin
+    King_Jester, MG_BT, Flame_BT, SPG, RSC, StormCannon,
+    UndergroundFortress, IntelCenter, Frigate, Warden_Submarine, Bowhead,
+    Longhook, Bluefin, Firebrand
 )
 
 def test_prod_empty_cost_exception() -> None:
@@ -64,8 +64,8 @@ def test_skycaller_resources() -> None:
     assert resources["Sulfur"] == 160.0
 
 def test_king_jester_resources() -> None:
-    """Test resource calculation for KingJester."""
-    resources = KingJester.total_basic_resources()
+    """Test resource calculation for King_Jester."""
+    resources = King_Jester.total_basic_resources()
     assert resources["Salvage"] == 2270.0
     assert resources["Coal"] == pytest.approx(2190.1)
     assert resources["Sulfur"] == 360.0
@@ -128,12 +128,18 @@ def test_frigate_resources() -> None:
     assert resources["Coal"] == pytest.approx(5662.8)
     assert resources["Rare Metals"] == 960.0
 
-def test_sub_resources() -> None:
-    """Test resource calculation for Sub."""
-    resources = Sub.total_basic_resources()
+def test_warden_submarine_resources() -> None:
+    """Test resource calculation for Warden_Submarine."""
+    resources = Warden_Submarine.total_basic_resources()
     assert resources["Salvage"] == 174300.0
     assert resources["Coal"] == pytest.approx(7078.5)
     assert resources["Rare Metals"] == 1200.0
+
+def test_firebrand_resources() -> None:
+    """Test resource calculation for Firebrand."""
+    resources = Firebrand.total_basic_resources()
+    assert resources["Salvage"] == 1875.0
+    assert resources["Sulfur"] == 300.0
 
 def test_bowhead_resources() -> None:
     """Test resource calculation for Bowhead."""

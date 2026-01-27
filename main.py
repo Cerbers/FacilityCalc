@@ -1,34 +1,11 @@
 from typing import Type, Any, Union, cast
-from products import *
-from products import (
-    Outlaw, Chieftain, Thornfall, Blinder, Skycaller, RAC, KingJester, Flame_BT, MG_BT, SPG, 
-    StormCannon, IntelCenter, UndergroundFortress, RSC, Sub, Frigate, Bluefin, Longhook, Bowhead, Prod
-)
+from products import Prod
+from vehicle_groups import Warden, Colonial, All
 from functions import pick_products, is_exit_key, get_build_quantity, is_user_input_in_map, calculate_total_resources, get_materials
 # TODO: have user be able to have multiple instances of same object
 
 
-Products: dict[str, Type[Prod]] = {
-    "Outlaw": Outlaw,
-    "Chieftain": Chieftain,
-    "Thornfall": Thornfall,
-    "ATHT": Blinder,
-    "Skycaller": Skycaller,
-    "RAC": RAC,
-    "King Jester": KingJester,
-    "Flame BT": Flame_BT,
-    "MG BT": MG_BT,
-    "SPG": SPG,
-    "SC": StormCannon,
-    "IC": IntelCenter,
-    "UF": UndergroundFortress,
-    "RSC": RSC,
-    "Sub": Sub,
-    "Frigate": Frigate,
-    "Bluefin": Bluefin,
-    "Longhook": Longhook,
-    "Bowhead": Bowhead
-}
+Products: dict[str, Type[Prod]] = {**Warden, **Colonial, **All}
 # create second dict of lowercase keys that correspond to Products keys ('rsc': 'RSC')
 lowercase_product_map: dict[str, str] = {k.lower(): k for k in Products}
 list_of_products = list(Products.keys())
