@@ -142,3 +142,6 @@ cython_debug/
 __pycache__/materials.cpython-314.pyc
 __pycache__/products.cpython-314.pyc
 tests/__pycache__/test_products.cpython-313-pytest-8.4.1.pyc
+
+# trae folder
+.trae/
