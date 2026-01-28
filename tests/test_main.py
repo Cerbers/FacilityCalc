@@ -81,106 +81,68 @@ class TestListOfProducts:
 
 # Test main_loop function
 class TestMainLoop:
-    @patch('main.users_map_of_products', {})
+    @pytest.mark.parametrize("test_id, user_inputs, expected_outputs", [
+        (
+            "single_product_no_materials",
+            ["0", "Outlaw", "2", "done"],
+            ["You chose: 2 Outlaw", "Total resources needed", "N/A"]
+        ),
+        (
+            "single_product_with_materials",
+            ["1", "Chieftain", "1", "done"],
+            ["You chose: 1 Chieftain", "Total Facility Materials needed"]
+        ),
+        (
+            "case_insensitive_selection",
+            ["0", "outlaw", "3", "done"],
+            ["You chose: 3 Outlaw"]
+        ),
+        (
+            "multiple_products",
+            ["0", "Outlaw", "2", "Chieftain", "3", "done"],
+            ["You chose: 2 Outlaw", "You chose: 3 Chieftain", "Calculating resources needed for [('Outlaw', 2), ('Chieftain', 3)]"]
+        ),
+        (
+            "accumulate_same_product",
+            ["0", "Outlaw", "2", "Outlaw", "3", "done"],
+            ["You chose: 2 Outlaw", "You chose: 3 Outlaw", "Calculating resources needed for [('Outlaw', 2), ('Outlaw', 3)]"]
+        ),
+        (
+            "invalid_product_then_valid",
+            ["0", "Silverhand", "Outlaw", "1", "done"],
+            ["Invalid choice", "You chose: 1 Outlaw"]
+        ),
+        (
+            "immediate_exit",
+            ["0", "done"],
+            ["Calculating resources needed"]
+        ),
+    ])
     @patch('builtins.input')
     @patch('builtins.print')
-    def test_main_loop_single_product_no_materials(
-        self, mock_print: MagicMock, mock_input: MagicMock
+    def test_main_loop_scenarios(
+        self, 
+        mock_print: MagicMock, 
+        mock_input: MagicMock, 
+        test_id: str, 
+        user_inputs: list[str], 
+        expected_outputs: list[str]
     ) -> None:
         from main import main_loop
 
-        # User selects "no materials", picks Outlaw, quantity 2, then exits
-        mock_input.side_effect = ["0", "Outlaw", "2", "done"]
+        # Setup inputs
+        mock_input.side_effect = user_inputs
 
+        # Execute
         main_loop()
 
-        # Verify print was called with results
+        # Verify outputs
         print_calls = [str(call) for call in mock_print.call_args_list]
-        assert any("Total resources needed" in call for call in print_calls)
-        assert any("N/A" in call for call in print_calls)
+        for expected in expected_outputs:
+            assert any(expected in call for call in print_calls), f"Test '{test_id}' failed: Expected '{expected}' in output"
+        
+        # We can't easily verify the internal accumulation in users_map_of_products
+        # because we patched it with a new dict, but we can verify the behavior via print output
+        # or by checking if calculate_total_resources was called with the summed dictionary if we mocked it.
+        # But here we are just checking the main_loop logic.
 
-    @patch('main.users_map_of_products', {})
-    @patch('builtins.input')
-    @patch('builtins.print')
-    def test_main_loop_with_materials_display(
-        self, mock_print: MagicMock, mock_input: MagicMock
-    ) -> None:
-        from main import main_loop
-
-        # User selects "show materials", picks Chieftain, quantity 1, then exits
-        mock_input.side_effect = ["1", "Chieftain", "1", "done"]
-
-        main_loop()
-
-        # Verify print was called with material results (not N/A)
-        print_calls = [str(call) for call in mock_print.call_args_list]
-        assert any("Total Facility Materials needed" in call for call in print_calls)
-
-    @patch('main.users_map_of_products', {})
-    @patch('builtins.input')
-    @patch('builtins.print')
-    def test_main_loop_invalid_product_then_valid(
-        self, mock_print: MagicMock, mock_input: MagicMock
-    ) -> None:
-        from main import main_loop
-
-        # User enters invalid product, then valid one
-        mock_input.side_effect = ["0", "Silverhand", "Outlaw", "1", "done"]
-
-        main_loop()
-
-        # Verify invalid choice message was printed
-        print_calls = [str(call) for call in mock_print.call_args_list]
-        assert any("Invalid choice" in call for call in print_calls)
-
-    @patch('main.users_map_of_products', {})
-    @patch('builtins.input')
-    @patch('builtins.print')
-    def test_main_loop_case_insensitive_product_selection(
-        self, mock_print: MagicMock, mock_input: MagicMock
-    ) -> None:
-        from main import main_loop
-
-        # User enters lowercase product name
-        mock_input.side_effect = ["0", "outlaw", "3", "done"]
-
-        main_loop()
-
-        # Verify the product was accepted
-        print_calls = [str(call) for call in mock_print.call_args_list]
-        assert any("You chose: 3 Outlaw" in call for call in print_calls)
-
-    @patch('main.users_map_of_products', {})
-    @patch('builtins.input')
-    @patch('builtins.print')
-    def test_main_loop_multiple_products(
-        self, mock_print: MagicMock, mock_input: MagicMock
-    ) -> None:
-        from main import main_loop
-
-        # User selects multiple products
-        mock_input.side_effect = ["0", "Outlaw", "2", "Chieftain", "3", "done"]
-
-        main_loop()
-
-        # Verify both products were acknowledged
-        print_calls = [str(call) for call in mock_print.call_args_list]
-        assert any("You chose: 2 Outlaw" in call for call in print_calls)
-        assert any("You chose: 3 Chieftain" in call for call in print_calls)
-
-    @patch('main.users_map_of_products', {})
-    @patch('builtins.input')
-    @patch('builtins.print')
-    def test_main_loop_immediate_exit(
-        self, mock_print: MagicMock, mock_input: MagicMock
-    ) -> None:
-        from main import main_loop
-
-        # User immediately exits without selecting products
-        mock_input.side_effect = ["0", "done"]
-
-        main_loop()
-
-        # Verify calculation was still attempted (with empty selection)
-        print_calls = [str(call) for call in mock_print.call_args_list]
-        assert any("Calculating resources needed" in call for call in print_calls)

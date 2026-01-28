@@ -54,5 +54,4 @@ poetry run mypy .
 
 ## Known Limitations
 
-- **Product selection overwrites previous entries**: Selecting the same product twice replaces the first quantity instead of adding to it. For example, selecting `SPG: 1`, then `Chieftain: 3`, then `SPG: 3` results in only 3 SPGs being calculated, not 4.
 - current calculation is based off worst case scenario (i.e. worst coal to coke conversion rates, PCmats made only using material beams recipe, etc.), at the moment switching between states is not being considerate

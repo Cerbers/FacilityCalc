@@ -88,7 +88,7 @@ def test_calculate_total_resources() -> None:
     mock_outlaw.total_basic_resources.return_value = {"Salvage": 10.0, "Coal": 5.0}
 
     products_map = {"Outlaw": mock_outlaw}
-    user_selection = {"Outlaw": 2}
+    user_selection = [("Outlaw", 2)]
 
     # Execute
     total = calculate_total_resources(user_selection, products_map)
@@ -104,7 +104,7 @@ def test_calculate_total_resources_no_method() -> None:
     class ProductWithoutResources: pass
 
     products_map = {"InvalidProduct": ProductWithoutResources()}
-    user_selection = {"InvalidProduct": 1}
+    user_selection = [("InvalidProduct", 1)]
 
     total = calculate_total_resources(user_selection, products_map)
     assert total == {}
@@ -128,7 +128,7 @@ def test_get_materials() -> None:
     mock_chieftain.cost = {"PCmat": 5.0, "A1": 10.0}
 
     products_map = {"Chieftain": mock_chieftain}
-    user_selection = {"Chieftain": 3}
+    user_selection = [("Chieftain", 3)]
 
     # Execute
     total = get_materials(user_selection, products_map)
@@ -142,7 +142,7 @@ def test_get_materials() -> None:
 def test_get_materials_no_cost() -> None:
     class ProductWithoutCost: pass
     products_map = {"InvalidProduct": ProductWithoutCost()}
-    user_selection = {"InvalidProduct": 1}
+    user_selection = [("InvalidProduct", 1)]
 
     total = get_materials(user_selection, products_map)
     assert total == {}

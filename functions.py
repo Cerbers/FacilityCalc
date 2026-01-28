@@ -32,10 +32,10 @@ def is_user_input_in_map(x: str, data_map: dict[str, Any]) -> bool:
     return x in data_map
 
 
-def calculate_total_resources(users_map_of_products: dict[str, int], Products: dict[str, Any]) -> dict[str, float]:
+def calculate_total_resources(user_selections: list[tuple[str, int]], Products: dict[str, Any]) -> dict[str, float]:
     total: dict[str, float] = dict() 
     # iterate over products picked by user and get their true key
-    for product_name, amount in users_map_of_products.items():
+    for product_name, amount in user_selections:
         product_picked = Products[product_name]
         if hasattr(product_picked, 'total_basic_resources'):
             # throws the return of the method in resources
@@ -57,10 +57,10 @@ def sum_resources_from_each_product(data_map: dict[str, float], ref: dict[str, f
     return last_val
 
 
-def get_materials(users_map_of_products: dict[str, int], Products: dict[str, Any]) -> dict[str, float]:
+def get_materials(user_selections: list[tuple[str, int]], Products: dict[str, Any]) -> dict[str, float]:
     total: dict[str, float] = dict() 
     # iterate over products picked by user and get their true key
-    for product_name, amount in users_map_of_products.items():
+    for product_name, amount in user_selections:
         product_picked = Products[product_name]
         if hasattr(product_picked, 'cost'):
             materials: dict[str, float] = product_picked.cost
