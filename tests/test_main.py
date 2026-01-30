@@ -14,9 +14,9 @@ from main import Products, lowercase_product_map, list_of_products
 class TestProductsDictionary:
     def test_products_contains_all_vehicles(self) -> None:
         expected_keys = [
-            "Outlaw", "Chieftain", "Thornfall", "ATHT", "Skycaller", "RAC",
-            "King Jester", "Flame BT", "MG BT", "SPG", "SC", "IC", "UF",
-            "RSC", "Nakki", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand"
+            "Outlaw", "Chieftain", "Thornfall", "Blinder", "Skycaller", "RAC",
+            "King_Jester", "Flame_BT", "MG_BT", "SPG", "StormCannon", "IntelCenter", "UndergroundFortress",
+            "RSC", "Warden_Submarine", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand"
         ]
         for key in expected_keys:
             assert key in Products, f"Missing product: {key}"
@@ -25,18 +25,18 @@ class TestProductsDictionary:
         assert Products["Outlaw"] is Outlaw
         assert Products["Chieftain"] is Chieftain
         assert Products["Thornfall"] is Thornfall
-        assert Products["ATHT"] is Blinder
+        assert Products["Blinder"] is Blinder
         assert Products["Skycaller"] is Skycaller
         assert Products["RAC"] is RAC
-        assert Products["King Jester"] is King_Jester
-        assert Products["Flame BT"] is Flame_BT
-        assert Products["MG BT"] is MG_BT
+        assert Products["King_Jester"] is King_Jester
+        assert Products["Flame_BT"] is Flame_BT
+        assert Products["MG_BT"] is MG_BT
         assert Products["SPG"] is SPG
-        assert Products["SC"] is StormCannon
-        assert Products["IC"] is IntelCenter
-        assert Products["UF"] is UndergroundFortress
+        assert Products["StormCannon"] is StormCannon
+        assert Products["IntelCenter"] is IntelCenter
+        assert Products["UndergroundFortress"] is UndergroundFortress
         assert Products["RSC"] is RSC
-        assert Products["Nakki"] is Warden_Submarine
+        assert Products["Warden_Submarine"] is Warden_Submarine
         assert Products["Frigate"] is Frigate
         assert Products["Bluefin"] is Bluefin
         assert Products["Longhook"] is Longhook
@@ -65,8 +65,8 @@ class TestLowercaseProductMap:
     def test_lowercase_lookup_for_vehicles(self) -> None:
         assert lowercase_product_map["outlaw"] == "Outlaw"
         assert lowercase_product_map["chieftain"] == "Chieftain"
-        assert lowercase_product_map["king jester"] == "King Jester"
-        assert lowercase_product_map["flame bt"] == "Flame BT"
+        assert lowercase_product_map["king_jester"] == "King_Jester"
+        assert lowercase_product_map["flame_bt"] == "Flame_BT"
         assert lowercase_product_map["rsc"] == "RSC"
 
 
