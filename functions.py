@@ -48,13 +48,10 @@ def calculate_total_resources(user_selections: list[tuple[str, int]], Products: 
 
 
 def sum_resources_from_each_product(data_map: dict[str, float], ref: dict[str, float]) -> float:
-    # This function seems to return the last value, which is odd, but keeping logic consistent.
-    # It modifies ref in place.
-    last_val = 0.0
     for k, v in data_map.items():
         ref[k] = ref.get(k, 0.0) + v
-        last_val = ref[k]
-    return last_val
+
+
 
 
 def get_materials(user_selections: list[tuple[str, int]], Products: dict[str, Any]) -> dict[str, float]:

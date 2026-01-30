@@ -10,8 +10,6 @@ def _initialize_groups() -> None:
     # Iterate over all attributes in products module to find Prod subclasses
     for name, obj in vars(products).items():
         if isinstance(obj, type) and issubclass(obj, Prod) and obj is not Prod:
-            # The class should have 'faction' attribute due to our changes in products.py
-            # and _load_products validation
             if not hasattr(obj, 'faction'):
                 continue
                 

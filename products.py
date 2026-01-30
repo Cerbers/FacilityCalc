@@ -14,13 +14,23 @@ class Prod:
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         super().__init_subclass__(**kwargs)
-        if not hasattr(cls, "faction"):
-            return # Should we allow subclasses without faction? The user requirement implies strictly checking.
-            # But the dynamic creation will pass it. 
         
-        # validation
+        # Allow Prod base class itself to not have faction
+        if cls.__name__ == 'Prod':
+            return
+        
+        # All subclasses MUST have faction
+        if not hasattr(cls, "faction") or not cls.faction:
+            raise ValueError(
+                f"Product '{cls.__name__}' must define a non-empty 'faction' attribute"
+            )
+        
+        # Validate faction value
         if cls.faction not in ["warden", "colonial", "all"]:
-             raise ValueError(f"Invalid faction '{cls.faction}' for product '{cls.__name__}'. Must be 'warden', 'colonial', or 'all'.")
+            raise ValueError(
+                f"Invalid faction '{cls.faction}' for product '{cls.__name__}'. "
+                f"Must be 'warden', 'colonial', or 'all'."
+            )
 
     @classmethod
     def total_basic_resources(cls) -> dict[str, float]:
@@ -46,22 +56,28 @@ def _load_products():
             products_data = json.load(f)
             
         for name, data in products_data.items():
-            # Check if data follows new schema (has 'faction' and 'cost')
-            if "cost" in data and "faction" in data:
-                 cost_data = data["cost"]
-                 faction = data["faction"]
-            else:
-                 # Fallback for old schema or partial data - though we are updating json next.
-                 # Let's assume strict new schema or just handle cost if it's the old one (but we will fail validation)
-                 # Actually, let's just implement the new schema logic.
-                 cost_data = data.get("cost", {})
-                 faction = data.get("faction", "")
+            # Validate required fields
+            if "cost" not in data:
+                print(f"Warning: Skipping '{name}' - missing 'cost' field")
+                continue
+            if "faction" not in data or not data["faction"]:
+                print(f"Warning: Skipping '{name}' - missing or empty 'faction' field")
+                continue
+            
+            cost_data = data["cost"]
+            faction = data["faction"]
+            
+            # Validate faction value before class creation
+            if faction not in ["warden", "colonial", "all"]:
+                print(f"Warning: Skipping '{name}' - invalid faction '{faction}'")
+                continue
 
-            # Create class dynamically: type(name, bases, dict)
-            # We inherit from Prod and set the 'cost' and 'faction' attributes
-            cls = type(name, (Prod,), {'cost': cost_data, 'faction': faction})
-            # Add the class to the module's global namespace
-            globals()[name] = cls
+            # Create class dynamically
+            try:
+                cls = type(name, (Prod,), {'cost': cost_data, 'faction': faction})
+                globals()[name] = cls
+            except ValueError as e:
+                print(f"Error creating '{name}': {e}")
             
     except FileNotFoundError:
         print(f"Warning: {json_path} not found. No products loaded.")
