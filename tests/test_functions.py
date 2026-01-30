@@ -12,7 +12,8 @@ from functions import (
 )
 
 # Test iterate_and_multiply_keys
-def test_iterate_and_multiply_keys() -> None:
+@pytest.mark.parametrize("key, expected", [("Salvage", 22.0), ("Coal", 10.0)])
+def test_iterate_and_multiply_keys_values(key: str, expected: float) -> None:
     # Setup
     resource_costs = {"Salvage": 10.0, "Coal": 5.0}
     accumulated = {"Salvage": 2.0}
@@ -24,8 +25,13 @@ def test_iterate_and_multiply_keys() -> None:
     # Assert
     # Salvage: 2.0 + 10.0 * 2 = 22.0
     # Coal: 0.0 + 5.0 * 2 = 10.0
-    assert output["Salvage"] == 22.0
-    assert output["Coal"] == 10.0
+    assert output[key] == expected
+
+def test_iterate_and_multiply_keys_length() -> None:
+    resource_costs = {"Salvage": 10.0, "Coal": 5.0}
+    accumulated = {"Salvage": 2.0}
+    qty = 2
+    output = iterate_and_multiply_keys(resource_costs, accumulated, qty)
     assert len(output) == 2
 
 def test_iterate_and_multiply_keys_empty_map() -> None:
@@ -82,7 +88,8 @@ def test_is_user_input_in_map() -> None:
     assert is_user_input_in_map("Silverhand", products_map) is False
 
 # Test calculate_total_resources
-def test_calculate_total_resources() -> None:
+@pytest.mark.parametrize("resource, expected_amount", [("Salvage", 20.0), ("Coal", 10.0)])
+def test_calculate_total_resources(resource: str, expected_amount: float) -> None:
     # Setup mock Outlaw that returns basic resources
     mock_outlaw = MagicMock()
     mock_outlaw.total_basic_resources.return_value = {"Salvage": 10.0, "Coal": 5.0}
@@ -96,8 +103,7 @@ def test_calculate_total_resources() -> None:
     # Assert
     # Salvage: 10 * 2 = 20
     # Coal: 5 * 2 = 10
-    assert total["Salvage"] == 20.0
-    assert total["Coal"] == 10.0
+    assert total[resource] == expected_amount
 
 def test_calculate_total_resources_no_method() -> None:
     # Setup product without total_basic_resources method
@@ -110,7 +116,8 @@ def test_calculate_total_resources_no_method() -> None:
     assert total == {}
 
 # Test sum_resources_from_each_product
-def test_sum_resources_from_each_product() -> None:
+@pytest.mark.parametrize("resource, expected", [("Salvage", 15.0), ("Sulfur", 20.0)])
+def test_sum_resources_from_each_product(resource: str, expected: float) -> None:
     resource_costs = {"Salvage": 10.0, "Sulfur": 20.0}
     accumulated = {"Salvage": 5.0}
 
@@ -118,11 +125,11 @@ def test_sum_resources_from_each_product() -> None:
     sum_resources_from_each_product(resource_costs, accumulated)
 
     # Assert
-    assert accumulated["Salvage"] == 15.0  # 5 + 10
-    assert accumulated["Sulfur"] == 20.0  # 0 + 20
+    assert accumulated[resource] == expected
 
 # Test get_materials
-def test_get_materials() -> None:
+@pytest.mark.parametrize("material, expected", [("PCmat", 15.0), ("A1", 30.0)])
+def test_get_materials(material: str, expected: float) -> None:
     # Setup mock Chieftain with facility material costs
     mock_chieftain = MagicMock()
     mock_chieftain.cost = {"PCmat": 5.0, "A1": 10.0}
@@ -136,8 +143,7 @@ def test_get_materials() -> None:
     # Assert
     # PCmat: 5.0 * 3 = 15.0
     # A1: 10.0 * 3 = 30.0
-    assert total["PCmat"] == 15.0
-    assert total["A1"] == 30.0
+    assert total[material] == expected
 
 def test_get_materials_no_cost() -> None:
     class ProductWithoutCost: pass

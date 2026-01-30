@@ -24,15 +24,21 @@ def test_pcmat_basic_resources() -> None:
     resources = PCmat.total_basic_resources()
     assert resources == {"Salvage": 100.0}
 
-def test_steel_basic_resources() -> None:
+@pytest.mark.parametrize("resource, expected_amount", [
+    ("Salvage", 300.0),
+    ("Sulfur", 60.0),
+    ("Coal", 151.25)
+])
+def test_steel_basic_resources(resource: str, expected_amount: float) -> None:
     """Test resource calculation for Steel."""
     resources = Steel.total_basic_resources()
-    assert resources["Salvage"] == 300.0
-    assert resources["Sulfur"] == 60.0
-    assert resources["Coal"] == pytest.approx(151.25)
+    assert resources[resource] == pytest.approx(expected_amount)
 
-def test_a1_basic_resources() -> None:
+@pytest.mark.parametrize("resource, expected_amount", [
+    ("Salvage", 15.0),
+    ("Coal", 90.75)
+])
+def test_a1_basic_resources(resource: str, expected_amount: float) -> None:
     """Test resource calculation for A1."""
     resources = A1.total_basic_resources()
-    assert resources["Salvage"] == 15.0
-    assert resources["Coal"] == pytest.approx(90.75)
+    assert resources[resource] == pytest.approx(expected_amount)

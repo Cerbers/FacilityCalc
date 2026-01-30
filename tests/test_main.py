@@ -12,40 +12,42 @@ from main import Products, lowercase_product_map, list_of_products
 
 # Test Products dictionary
 class TestProductsDictionary:
-    def test_products_contains_all_vehicles(self) -> None:
-        expected_keys = [
-            "Outlaw", "Chieftain", "Thornfall", "Blinder", "Skycaller", "RAC",
-            "King_Jester", "Flame_BT", "MG_BT", "SPG", "StormCannon", "IntelCenter", "UndergroundFortress",
-            "RSC", "Warden_Submarine", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand"
-        ]
-        for key in expected_keys:
-            assert key in Products, f"Missing product: {key}"
+    @pytest.mark.parametrize("key", [
+        "Outlaw", "Chieftain", "Thornfall", "Blinder", "Skycaller", "RAC",
+        "King_Jester", "Flame_BT", "MG_BT", "SPG", "StormCannon", "IntelCenter", "UndergroundFortress",
+        "RSC", "Warden_Submarine", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand"
+    ])
+    def test_products_contains_all_vehicles(self, key: str) -> None:
+        assert key in Products, f"Missing product: {key}"
 
-    def test_products_maps_to_correct_classes(self) -> None:
-        assert Products["Outlaw"] is Outlaw
-        assert Products["Chieftain"] is Chieftain
-        assert Products["Thornfall"] is Thornfall
-        assert Products["Blinder"] is Blinder
-        assert Products["Skycaller"] is Skycaller
-        assert Products["RAC"] is RAC
-        assert Products["King_Jester"] is King_Jester
-        assert Products["Flame_BT"] is Flame_BT
-        assert Products["MG_BT"] is MG_BT
-        assert Products["SPG"] is SPG
-        assert Products["StormCannon"] is StormCannon
-        assert Products["IntelCenter"] is IntelCenter
-        assert Products["UndergroundFortress"] is UndergroundFortress
-        assert Products["RSC"] is RSC
-        assert Products["Warden_Submarine"] is Warden_Submarine
-        assert Products["Frigate"] is Frigate
-        assert Products["Bluefin"] is Bluefin
-        assert Products["Longhook"] is Longhook
-        assert Products["Bowhead"] is Bowhead
-        assert Products["Firebrand"] is Firebrand
+    @pytest.mark.parametrize("name, expected_class", [
+        ("Outlaw", Outlaw),
+        ("Chieftain", Chieftain),
+        ("Thornfall", Thornfall),
+        ("Blinder", Blinder),
+        ("Skycaller", Skycaller),
+        ("RAC", RAC),
+        ("King_Jester", King_Jester),
+        ("Flame_BT", Flame_BT),
+        ("MG_BT", MG_BT),
+        ("SPG", SPG),
+        ("StormCannon", StormCannon),
+        ("IntelCenter", IntelCenter),
+        ("UndergroundFortress", UndergroundFortress),
+        ("RSC", RSC),
+        ("Warden_Submarine", Warden_Submarine),
+        ("Frigate", Frigate),
+        ("Bluefin", Bluefin),
+        ("Longhook", Longhook),
+        ("Bowhead", Bowhead),
+        ("Firebrand", Firebrand),
+    ])
+    def test_products_maps_to_correct_classes(self, name: str, expected_class: Type[Prod]) -> None:
+        assert Products[name] is expected_class
 
-    def test_all_products_are_prod_subclasses(self) -> None:
-        for name, product_class in Products.items():
-            assert issubclass(product_class, Prod), f"{name} is not a Prod subclass"
+    @pytest.mark.parametrize("name, product_class", Products.items())
+    def test_all_products_are_prod_subclasses(self, name: str, product_class: Type[Prod]) -> None:
+        assert issubclass(product_class, Prod), f"{name} is not a Prod subclass"
 
 
 # Test lowercase_product_map
@@ -53,21 +55,24 @@ class TestLowercaseProductMap:
     def test_lowercase_map_has_same_length_as_products(self) -> None:
         assert len(lowercase_product_map) == len(Products)
 
-    def test_lowercase_map_keys_are_lowercase(self) -> None:
-        for key in lowercase_product_map.keys():
-            assert key == key.lower(), f"Key '{key}' is not lowercase"
+    @pytest.mark.parametrize("key", lowercase_product_map.keys())
+    def test_lowercase_map_keys_are_lowercase(self, key: str) -> None:
+        assert key == key.lower(), f"Key '{key}' is not lowercase"
 
-    def test_lowercase_map_values_match_products_keys(self) -> None:
-        for lowercase_key, original_key in lowercase_product_map.items():
-            assert original_key in Products
-            assert lowercase_key == original_key.lower()
+    @pytest.mark.parametrize("lowercase_key, original_key", lowercase_product_map.items())
+    def test_lowercase_map_values_match_products_keys(self, lowercase_key: str, original_key: str) -> None:
+        assert original_key in Products
+        assert lowercase_key == original_key.lower()
 
-    def test_lowercase_lookup_for_vehicles(self) -> None:
-        assert lowercase_product_map["outlaw"] == "Outlaw"
-        assert lowercase_product_map["chieftain"] == "Chieftain"
-        assert lowercase_product_map["king_jester"] == "King_Jester"
-        assert lowercase_product_map["flame_bt"] == "Flame_BT"
-        assert lowercase_product_map["rsc"] == "RSC"
+    @pytest.mark.parametrize("key, expected_value", [
+        ("outlaw", "Outlaw"),
+        ("chieftain", "Chieftain"),
+        ("king_jester", "King_Jester"),
+        ("flame_bt", "Flame_BT"),
+        ("rsc", "RSC")
+    ])
+    def test_lowercase_lookup_for_vehicles(self, key: str, expected_value: str) -> None:
+        assert lowercase_product_map[key] == expected_value
 
 
 # Test list_of_products
