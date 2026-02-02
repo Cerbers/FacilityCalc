@@ -1,12 +1,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from typing import Type
-
-from products import (
-    Outlaw, Chieftain, Thornfall, Blinder, Skycaller, RAC, King_Jester,
-    Flame_BT, MG_BT, SPG, StormCannon, IntelCenter, UndergroundFortress,
-    RSC, Warden_Submarine, Frigate, Bluefin, Longhook, Bowhead, Prod, Firebrand
-)
+import products
+from products import Prod
 from main import Products, lowercase_product_map, list_of_products
 
 
@@ -14,35 +10,36 @@ from main import Products, lowercase_product_map, list_of_products
 class TestProductsDictionary:
     @pytest.mark.parametrize("key", [
         "Outlaw", "Chieftain", "Thornfall", "Blinder", "Skycaller", "RAC",
-        "King_Jester", "Flame_BT", "MG_BT", "SPG", "StormCannon", "IntelCenter", "UndergroundFortress",
-        "RSC", "Warden_Submarine", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand"
+        "King Jester", "Flame BT", "MG BT", "Stain SPG", "Storm Cannon", "Intel Center", "Underground Fortress",
+        "RSC", "Warden Submarine", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand"
     ])
     def test_products_contains_all_vehicles(self, key: str) -> None:
         assert key in Products, f"Missing product: {key}"
 
-    @pytest.mark.parametrize("name, expected_class", [
-        ("Outlaw", Outlaw),
-        ("Chieftain", Chieftain),
-        ("Thornfall", Thornfall),
-        ("Blinder", Blinder),
-        ("Skycaller", Skycaller),
-        ("RAC", RAC),
-        ("King_Jester", King_Jester),
-        ("Flame_BT", Flame_BT),
-        ("MG_BT", MG_BT),
-        ("SPG", SPG),
-        ("StormCannon", StormCannon),
-        ("IntelCenter", IntelCenter),
-        ("UndergroundFortress", UndergroundFortress),
-        ("RSC", RSC),
-        ("Warden_Submarine", Warden_Submarine),
-        ("Frigate", Frigate),
-        ("Bluefin", Bluefin),
-        ("Longhook", Longhook),
-        ("Bowhead", Bowhead),
-        ("Firebrand", Firebrand),
+    @pytest.mark.parametrize("name", [
+        "Outlaw",
+        "Chieftain",
+        "Thornfall",
+        "Blinder",
+        "Skycaller",
+        "RAC",
+        "King Jester",
+        "Flame BT",
+        "MG BT",
+        "Stain SPG",
+        "Storm Cannon",
+        "Intel Center",
+        "Underground Fortress",
+        "RSC",
+        "Warden Submarine",
+        "Frigate",
+        "Bluefin",
+        "Longhook",
+        "Bowhead",
+        "Firebrand",
     ])
-    def test_products_maps_to_correct_classes(self, name: str, expected_class: Type[Prod]) -> None:
+    def test_products_maps_to_correct_classes(self, name: str) -> None:
+        expected_class = getattr(products, name)
         assert Products[name] is expected_class
 
     @pytest.mark.parametrize("name, product_class", Products.items())
@@ -67,8 +64,10 @@ class TestLowercaseProductMap:
     @pytest.mark.parametrize("key, expected_value", [
         ("outlaw", "Outlaw"),
         ("chieftain", "Chieftain"),
-        ("king_jester", "King_Jester"),
-        ("flame_bt", "Flame_BT"),
+        ("king jester", "King Jester"),
+        ("flame bt", "Flame BT"),
+        ("mg bt", "MG BT"),
+        ("stain spg", "Stain SPG"),
         ("rsc", "RSC")
     ])
     def test_lowercase_lookup_for_vehicles(self, key: str, expected_value: str) -> None:

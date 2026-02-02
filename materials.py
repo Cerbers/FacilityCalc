@@ -102,6 +102,13 @@ class NavalHullSegment(Material):
         "Thermal": 4.0
     }
 
+class NavalTurbine(Material):
+    cost = {
+        "A5": 20.0,
+        "RareAlloy": 20.0
+    }
+
+
 class ConstructionPart(Material):
     cost = {
         "PCmat": 250.0,
@@ -143,6 +150,7 @@ materials_map: dict[str, Type[Material]] = {
     "RareAlloy": RareAlloy,
     "Thermal": ThermalShielding,
     "NavalPlate": NavalShellPlating,
+    "NavalTurbine": NavalTurbine,
     "NavalHull": NavalHullSegment,
     "CP": ConstructionPart,
     "SP": StructurePart,

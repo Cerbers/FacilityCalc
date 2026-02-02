@@ -15,8 +15,8 @@ def pick_products(options_list: list[str], data_map: dict[str, str]) -> str:
     return user_input
 
 
-def is_exit_key(inp: str) -> bool:
-    return inp == "done"
+def is_exit_key(input: str) -> bool:
+    return input == "done"
 
 
 def get_build_quantity(product_name: str) -> int:
@@ -47,10 +47,9 @@ def calculate_total_resources(user_selections: list[tuple[str, int]], Products: 
     return total
 
 
-def sum_resources_from_each_product(data_map: dict[str, float], ref: dict[str, float]) -> float:
+def sum_resources_from_each_product(data_map: dict[str, float], ref: dict[str, float]) -> None:
     for k, v in data_map.items():
         ref[k] = ref.get(k, 0.0) + v
-
 
 
 

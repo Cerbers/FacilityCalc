@@ -4,7 +4,7 @@ import os
 import materials as mats
 from functions import iterate_and_multiply_keys
 
-# TODO: Externalize products objects to a json file from which program will read them so the user can add/remove/change products without changing code
+# TODO: have for each product acceptable input names for better UX
 
 
 

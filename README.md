@@ -20,12 +20,13 @@ python main.py
 
 Warden:
 Outlaw, Chieftain, Thornfall, ATHT, Skycaller, RAC, King Jester, Flame BT, MG BT, SPG, Nakki, Frigate, Firebrand
+Callahan, Mercy, Cullen Predator
 
 Colonial:
-none present yet
+Ares
 
 Faction Neutral:
-Bluefin, Longhook, Bowhead, RSC, SC, IC, UF
+Bluefin, Longhook, Bowhead, RSC, Storm Cannon, Intel Center, Underground Fortress
 
 ## Development
 
