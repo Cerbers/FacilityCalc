@@ -1,4 +1,4 @@
-from typing import Type, Any, Union, cast
+from typing import Type, Union
 from products import Prod, name_mappings
 from vehicle_groups import Warden, Colonial, All
 from functions import pick_products, is_exit_key, get_build_quantity, is_user_input_in_map, calculate_total_resources, get_materials
