@@ -1,13 +1,12 @@
 from typing import Type, Any, Union, cast
-from products import Prod
+from products import Prod, name_mappings
 from vehicle_groups import Warden, Colonial, All
 from functions import pick_products, is_exit_key, get_build_quantity, is_user_input_in_map, calculate_total_resources, get_materials
 
 
 
 Products: dict[str, Type[Prod]] = {**Warden, **Colonial, **All}
-# create second dict of lowercase keys that correspond to Products keys ('rsc': 'RSC')
-lowercase_product_map: dict[str, str] = {k.lower(): k for k in Products}
+# Use name_mappings from products module which includes all aliases
 list_of_products = list(Products.keys())
 
 
@@ -19,7 +18,7 @@ def main_loop() -> None:
 
     while True:
         print("Type: 'done' to skip to start calculation or exit")
-        choice = pick_products(list_of_products, lowercase_product_map)
+        choice = pick_products(list_of_products, name_mappings)
         if choice not in list_of_products and choice != 'done':
             print(f"Invalid choice. Please choose from {list_of_products}.")
             continue

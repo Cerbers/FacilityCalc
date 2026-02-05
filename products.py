@@ -4,13 +4,11 @@ import os
 import materials as mats
 from functions import iterate_and_multiply_keys
 
-# TODO: have for each product acceptable input names for better UX
-
-
 
 class Prod:
     cost: dict[str, float] = {}
     faction: str
+    names: list[str] = []
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         super().__init_subclass__(**kwargs)
@@ -46,8 +44,12 @@ class Prod:
                 iterate_and_multiply_keys(resources, total, qty)
             return total
 
+# Global dictionary to map all acceptable names to product names
+name_mappings: dict[str, str] = {}
+
 def _load_products():
     """Load products from JSON file and create classes dynamically."""
+    global name_mappings
     current_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(current_dir, 'products.json')
     
@@ -72,10 +74,20 @@ def _load_products():
                 print(f"Warning: Skipping '{name}' - invalid faction '{faction}'")
                 continue
 
+            # Get names list - use product name as default if not specified
+            names_list = data.get("names", [name])
+            
             # Create class dynamically
             try:
-                cls = type(name, (Prod,), {'cost': cost_data, 'faction': faction})
+                cls = type(name, (Prod,), {'cost': cost_data, 'faction': faction, 'names': names_list})
                 globals()[name] = cls
+                
+                # Add all names to the global name_mappings dictionary
+                for alias in names_list:
+                    alias_lower = alias.lower()
+                    if alias_lower in name_mappings:
+                        print(f"Warning: Duplicate alias '{alias}' for product '{name}' (already maps to '{name_mappings[alias_lower]}')")
+                    name_mappings[alias_lower] = name
             except ValueError as e:
                 print(f"Error creating '{name}': {e}")
             

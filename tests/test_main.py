@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from typing import Type
 import products
 from products import Prod
-from main import Products, lowercase_product_map, list_of_products
+from main import Products, name_mappings, list_of_products
 
 
 # Test Products dictionary
@@ -47,19 +47,15 @@ class TestProductsDictionary:
         assert issubclass(product_class, Prod), f"{name} is not a Prod subclass"
 
 
-# Test lowercase_product_map
-class TestLowercaseProductMap:
-    def test_lowercase_map_has_same_length_as_products(self) -> None:
-        assert len(lowercase_product_map) == len(Products)
-
-    @pytest.mark.parametrize("key", lowercase_product_map.keys())
-    def test_lowercase_map_keys_are_lowercase(self, key: str) -> None:
+# Test name_mappings
+class TestNameMappings:
+    @pytest.mark.parametrize("key", name_mappings.keys())
+    def test_name_mappings_keys_are_lowercase(self, key: str) -> None:
         assert key == key.lower(), f"Key '{key}' is not lowercase"
 
-    @pytest.mark.parametrize("lowercase_key, original_key", lowercase_product_map.items())
-    def test_lowercase_map_values_match_products_keys(self, lowercase_key: str, original_key: str) -> None:
+    @pytest.mark.parametrize("name_key, original_key", name_mappings.items())
+    def test_name_mappings_values_match_products_keys(self, name_key: str, original_key: str) -> None:
         assert original_key in Products
-        assert lowercase_key == original_key.lower()
 
     @pytest.mark.parametrize("key, expected_value", [
         ("outlaw", "Outlaw"),
@@ -68,10 +64,30 @@ class TestLowercaseProductMap:
         ("flame bt", "Flame BT"),
         ("mg bt", "MG BT"),
         ("stain spg", "Stain SPG"),
-        ("rsc", "RSC")
+        ("rsc", "RSC"),
+        ("atht", "Blinder"),
+        ("rocket ac", "RAC"),
+        ("rocketht", "Skycaller"),
+        ("kj", "King Jester"),
+        ("mgbt", "MG BT"),
+        ("flamebt", "Flame BT"),
+        ("stainspg", "Stain SPG"),
+        ("spg", "Stain SPG"),
+        ("stormcannon", "Storm Cannon"),
+        ("sc", "Storm Cannon"),
+        ("uf", "Underground Fortress"),
+        ("intelcenter", "Intel Center"),
+        ("ic", "Intel Center"),
+        ("nakki", "Warden Submarine"),
+        ("flame htd", "Firebrand"),
+        ("cp", "Cullen Predator"),
+        ("predator", "Cullen Predator"),
+        ("wardenbs", "Callahan"),
+        ("warden battleship", "Callahan"),
+        ("colonial carrier", "Mercy"),
     ])
-    def test_lowercase_lookup_for_vehicles(self, key: str, expected_value: str) -> None:
-        assert lowercase_product_map[key] == expected_value
+    def test_name_mappings_lookup_for_vehicles(self, key: str, expected_value: str) -> None:
+        assert name_mappings[key] == expected_value
 
 
 # Test list_of_products
@@ -120,6 +136,16 @@ class TestMainLoop:
             "immediate_exit",
             ["0", "done"],
             ["Calculating resources needed"]
+        ),
+        (
+            "alias_selection",
+            ["0", "atht", "1", "done"],
+            ["You chose: 1 Blinder"]
+        ),
+        (
+            "alias_selection_rac",
+            ["0", "rocket ac", "1", "done"],
+            ["You chose: 1 RAC"]
         ),
     ])
     @patch('builtins.input')

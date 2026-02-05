@@ -2,6 +2,7 @@
 {
     "Chieftain": {
         "faction": "warden",
+        "names": ["Chieftain", "ht"],
         "cost": {
             "PCmat": 5.0,
             "A1": 10.0,
@@ -10,6 +11,7 @@
     },
     "Thornfall": {
         "faction": "warden",
+        "names": ["Thornfall"],
         "cost": {
             "PCmat": 60.0,
             "A4": 15.0,
@@ -19,6 +21,7 @@
     },
     "Outlaw": {
         "faction": "warden",
+        "names": ["Outlaw"],
         "cost": {
             "PCmat": 10.0,
             "A1": 10.0,
@@ -27,6 +30,7 @@
     },
     "Blinder": {
         "faction": "warden",
+        "names": ["Blinder", "atht"],
         "cost": {
             "PCmat": 5.0,
             "A2": 10.0,
@@ -35,6 +39,7 @@
     },
     "RAC": {
         "faction": "warden",
+        "names": ["RAC", "rocket ac"],
         "cost": {
             "PCmat": 35.0,
             "A1": 10.0,
@@ -43,6 +48,7 @@
     },
     "Skycaller": {
         "faction": "warden",
+        "names": ["Skycaller", "rocketht"],
         "cost": {
             "PCmat": 10.0,
             "A1": 10.0,
@@ -51,6 +57,7 @@
     },
     "King Jester": {
         "faction": "warden",
+        "names": ["King Jester", "kj"],
         "cost": {
             "Steel": 5.0,
             "A1": 15.0,
@@ -60,6 +67,7 @@
     },
     "MG BT": {
         "faction": "warden",
+        "names": ["MG BT", "mgbt"],
         "cost": {
             "Steel": 50.0,
             "A5": 35.0,
@@ -69,6 +77,7 @@
     },
     "Flame BT": {
         "faction": "warden",
+        "names": ["Flame BT", "flamebt"],
         "cost": {
             "Steel": 40.0,
             "A5": 45.0,
@@ -78,6 +87,7 @@
     },
     "Stain SPG": {
         "faction": "warden",
+        "names": ["Stain SPG", "stainspg", "spg"],
         "cost": {
             "Steel": 150.0,
             "A5": 85.0,
@@ -87,6 +97,7 @@
     },
     "RSC": {
         "faction": "all",
+        "names": ["RSC"],
         "cost": {
             "Steel": 285.0,
             "A5": 105.0,
@@ -98,6 +109,7 @@
     },
     "Storm Cannon": {
         "faction": "all",
+        "names": ["Storm Cannon", "stormcannon", "sc"],
         "cost": {
             "CP": 1.0,
             "SP": 1.0,
@@ -106,6 +118,7 @@
     },
     "Underground Fortress": {
         "faction": "all",
+        "names": ["Underground Fortress", "uf"],
         "cost": {
             "PCmat": 200.0,
             "RareAlloy": 5.0,
@@ -114,6 +127,7 @@
     },
     "Intel Center": {
         "faction": "all",
+        "names": ["Intel Center", "intelcenter", "ic"],
         "cost": {
             "CP": 1.0,
             "SP": 1.0,
@@ -122,6 +136,7 @@
     },
     "Frigate": {
         "faction": "warden",
+        "names": ["Frigate"],
         "cost": {
             "NavalPlate": 12.0,
             "NavalHull": 12.0
@@ -129,6 +144,7 @@
     },
     "Warden Submarine": {
         "faction": "warden",
+        "names": ["Warden Submarine", "nakki"],
         "cost": {
             "NavalPlate": 15.0,
             "NavalHull": 15.0
@@ -136,6 +152,7 @@
     },
     "Firebrand": {
         "faction": "warden",
+        "names": ["Firebrand", "flame htd"],
         "cost": {
             "PCmat": 15.0,
             "A2": 10.0,
@@ -144,6 +161,7 @@
     },
     "Bowhead": {
         "faction": "all",
+        "names": ["Bowhead"],
         "cost": {
             "NavalPlate": 12.0,
             "NavalHull": 8.0
@@ -151,6 +169,7 @@
     },
     "Longhook": {
         "faction": "all",
+        "names": ["Longhook"],
         "cost": {
             "NavalPlate": 12.0,
             "NavalHull": 8.0
@@ -158,6 +177,7 @@
     },
     "Bluefin": {
         "faction": "all",
+        "names": ["Bluefin"],
         "cost": {
             "NavalPlate": 25.0,
             "NavalHull": 25.0
@@ -165,6 +185,7 @@
     },
     "Cullen Predator": {
         "faction": "warden",
+        "names": ["Cullen Predator", "cp", "predator"],
         "cost": {
             "Steel": 275.0,
             "A5": 105.0,
@@ -175,6 +196,7 @@
         },
     "Ares": {
             "faction": "colonial",
+            "names": ["Ares"],
             "cost": {
                 "Steel": 275.0,
                 "A5": 105.0,
@@ -185,6 +207,7 @@
         },
     "Callahan": {
         "faction": "warden",
+        "names": ["Callahan", "wardenbs", "warden battleship"],
         "cost": {
             "NavalHull": 20.0,
             "NavalPlate": 20.0,
@@ -193,6 +216,7 @@
     },
     "Mercy": {
         "faction": "warden",
+        "names": ["Mercy", "colonial carrier"],
         "cost": {
             "NavalHull": 25.0,
             "NavalPlate": 25.0,

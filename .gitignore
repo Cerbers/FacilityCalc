@@ -145,3 +145,7 @@ tests/__pycache__/test_products.cpython-313-pytest-8.4.1.pyc
 
 # trae folder
 .trae/
+.vscode/settings.json
+
+# Agents file
+AGENTS.md
