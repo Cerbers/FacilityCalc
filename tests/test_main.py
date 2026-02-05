@@ -11,7 +11,9 @@ class TestProductsDictionary:
     @pytest.mark.parametrize("key", [
         "Outlaw", "Chieftain", "Thornfall", "Blinder", "Skycaller", "RAC",
         "King Jester", "Flame BT", "MG BT", "Stain SPG", "Storm Cannon", "Intel Center", "Underground Fortress",
-        "RSC", "Warden Submarine", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand"
+        "RSC", "Warden Submarine", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand",
+        "Cullen Predator", "Ares", "Callahan", "Mercy",
+        "Titan", "Trident", "Conqueror", "Poseidon"
     ])
     def test_products_contains_all_vehicles(self, key: str) -> None:
         assert key in Products, f"Missing product: {key}"
@@ -37,6 +39,8 @@ class TestProductsDictionary:
         "Longhook",
         "Bowhead",
         "Firebrand",
+        "Cullen Predator", "Ares", "Callahan", "Mercy",
+        "Titan", "Trident", "Conqueror", "Poseidon"
     ])
     def test_products_maps_to_correct_classes(self, name: str) -> None:
         expected_class = getattr(products, name)
@@ -84,7 +88,18 @@ class TestNameMappings:
         ("predator", "Cullen Predator"),
         ("wardenbs", "Callahan"),
         ("warden battleship", "Callahan"),
-        ("colonial carrier", "Mercy"),
+        ("warden carrier", "Mercy"),
+        ("titan", "Titan"),
+        ("colonialbs", "Titan"),
+        ("colonial battleship", "Titan"),
+        ("trident", "Trident"),
+        ("colonial sub", "Trident"),
+        ("conqueror", "Conqueror"),
+        ("dd", "Conqueror"),
+        ("colonial destroyer", "Conqueror"),
+        ("poseidon", "Poseidon"),
+        ("colonial carrier", "Poseidon"),
+        ("cc", "Poseidon"),
     ])
     def test_name_mappings_lookup_for_vehicles(self, key: str, expected_value: str) -> None:
         assert name_mappings[key] == expected_value
@@ -170,9 +185,3 @@ class TestMainLoop:
         print_calls = [str(call) for call in mock_print.call_args_list]
         for expected in expected_outputs:
             assert any(expected in call for call in print_calls), f"Test '{test_id}' failed: Expected '{expected}' in output"
-        
-        # We can't easily verify the internal accumulation in users_map_of_products
-        # because we patched it with a new dict, but we can verify the behavior via print output
-        # or by checking if calculate_total_resources was called with the summed dictionary if we mocked it.
-        # But here we are just checking the main_loop logic.
-

@@ -216,11 +216,42 @@
     },
     "Mercy": {
         "faction": "warden",
-        "names": ["Mercy", "colonial carrier"],
+        "names": ["Mercy", "warden carrier"],
         "cost": {
-            "NavalHull": 25.0,
-            "NavalPlate": 25.0,
-            "NavalTurbine": 4.0
+            "NavalHull": 16.0,
+            "NavalPlate": 20.0
+        }
+    },
+    "Titan": {
+        "faction": "colonial",
+        "names": ["Titan", "colonialbs", "colonial battleship"],
+        "cost": {
+            "NavalHull": 20.0,
+            "NavalPlate": 20.0
+        }
+    },
+    "Trident": {
+        "faction": "colonial",
+        "names": ["Trident", "colonial sub"],
+        "cost": {
+            "NavalHull": 15.0,
+            "NavalPlate": 15.0
+        }
+    },
+    "Conqueror": {
+        "faction": "colonial",
+        "names": ["Conqueror", "dd", "colonial destroyer"],
+        "cost": {
+            "NavalHull": 12.0,
+            "NavalPlate": 12.0
+        }
+    },
+    "Poseidon": {
+        "faction": "colonial",
+        "names": ["Poseidon", "colonial carrier", "cc"],
+        "cost": {
+            "NavalHull": 20.0,
+            "NavalPlate": 20.0
         }
     }
 }
