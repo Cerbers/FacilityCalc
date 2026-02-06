@@ -47,7 +47,7 @@ class Prod:
 # Global dictionary to map all acceptable names to product names
 name_mappings: dict[str, str] = {}
 
-def _load_products():
+def _load_products() -> None:
     """Load products from JSON file and create classes dynamically."""
     global name_mappings
     current_dir = os.path.dirname(os.path.abspath(__file__))
