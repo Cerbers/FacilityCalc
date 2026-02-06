@@ -81,7 +81,6 @@ def _load_products():
             try:
                 cls = type(name, (Prod,), {'cost': cost_data, 'faction': faction, 'names': names_list})
                 globals()[name] = cls
-                
                 # Add all names to the global name_mappings dictionary
                 for alias in names_list:
                     alias_lower = alias.lower()

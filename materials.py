@@ -1,11 +1,23 @@
-from typing import Any, Type
+from typing import Type
 from functions import iterate_and_multiply_keys
 
-basic_resources: tuple[str, ...] = ("Salvage", "Coal", "Sulfur", "Rare Metals") # reminder of what the objects are breakdowned to
+basic_resources: tuple[str, ...] = ("Salvage", "Coal", "Sulfur", "Rare Metals", "Components") # reminder of what the objects are breakdowned to
 
 class Material:
     cost: dict[str, float] = {}
-    
+    recipes: dict[str, dict[str, float]] = {}
+    current_recipe: str = ""
+
+    @classmethod
+    def set_recipe(cls, recipe_name: str) -> None:
+        if recipe_name not in cls.recipes:
+            raise ValueError(
+                f"Unknown recipe '{recipe_name}' for {cls.__name__}. "
+                f"Available: {list(cls.recipes.keys())}"
+            )
+        cls.cost = cls.recipes[recipe_name]
+        cls.current_recipe = recipe_name
+
     @classmethod
     def total_basic_resources(cls) -> dict[str, float]:
             if not cls.cost:
@@ -21,20 +33,32 @@ class Material:
             return total
 
 class Coke(Material):
-    cost = {
-        "Coal": 1.21
+    recipes = {
+        "Coal Refinery Basic": {"Coal": 1.11},
+        "Coke Furnace": {"Coal": 1.21},
+        "Advanced Coal Liquefier (+Heavy Oil)": {"Coal": 1.15},
     }
+    cost = recipes["Coke Furnace"]
+    current_recipe = "Coke Furnace"
 
 class Cmat(Material):
-    cost = {
-        "Salvage": 5.0
+    recipes = {
+        "Material Factory": {"Salvage": 10.0},
+        "Assembly Bay": {"Salvage": 25.0},
+        "Metal Press (+Petrol)": {"Salvage": 5.0},
+        "Smelter": {"Salvage": 5.0, "Coke": 8.333},
     }
+    cost = recipes["Metal Press (+Petrol)"]
+    current_recipe = "Metal Press (+Petrol)"
 
 class PCmat(Material):
-    cost = {
-        "Cmat": 15.0,
-        "Salvage": 25.0 # this is a innacurate value, in place of 'metal beam'
+    recipes = {
+        "Metalworks": {"Cmat": 3.0, "Components": 20.0},
+        "Blast Furnace (+Heavy Oil)": {"Cmat": 1.0, "Components": 18.333},
+        "Recycler": {"Cmat": 15.0, "Salvage": 25.0},  # Salvage in place of 'metal beam'
     }
+    cost = recipes["Recycler"]
+    current_recipe = "Recycler"
 
 class A1(Material):
     cost = {
@@ -58,12 +82,22 @@ class A4(Material):
         "PCmat": 1.0
     }
 
-class Steel(Material):
-    cost = {
-        "PCmat": 3.0,
-        "Coke": 125.0,
-        "Sulfur": 60.0
+class EnrichedOil(Material):
+    recipes = {
+        "Oil Refinery (+Heavy Oil)": {"Sulfur": 60.0},
+        "Offshore Platform": {"Coal": 100.0},
     }
+    cost = recipes["Oil Refinery (+Heavy Oil)"]
+    current_recipe = "Oil Refinery (+Heavy Oil)"
+
+class Steel(Material):
+    recipes = {
+        "Default": {"PCmat": 3.0, "Coke": 125.0, "Sulfur": 60.0},
+        "Heavy Oil (+Heavy Oil)": {"PCmat": 3.0, "Coke": 200.0, "Sulfur": 65.0},
+        "Enriched Oil": {"PCmat": 3.0, "Coke": 125.0, "EnrichedOil": 1.0},
+    }
+    cost = recipes["Default"]
+    current_recipe = "Default"
 
 class A5(Material):
     cost = {
@@ -147,6 +181,7 @@ materials_map: dict[str, Type[Material]] = {
     "A4": A4,
     "A5": A5,
     "Steel": Steel,
+    "EnrichedOil": EnrichedOil,
     "RareAlloy": RareAlloy,
     "Thermal": ThermalShielding,
     "NavalPlate": NavalShellPlating,
@@ -157,3 +192,7 @@ materials_map: dict[str, Type[Material]] = {
     "SCP": StormCannonPart,
     "ICP": IntelCenterPart
 }
+
+def get_switchable_materials() -> dict[str, Type[Material]]:
+    """Return materials that have alternative recipes."""
+    return {name: cls for name, cls in materials_map.items() if cls.recipes}
