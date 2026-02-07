@@ -21,7 +21,7 @@ class Material:
     @classmethod
     def total_basic_resources(cls) -> dict[str, float]:
             if not cls.cost:
-                raise ValueError(f"No attributies in cost dictionary in {cls.__name__}")
+                raise ValueError(f"No attributes in cost dictionary in {cls.__name__}")
             total: dict[str, float] = {}
             for mat_name, qty in cls.cost.items():
                 mat = materials_map.get(mat_name)

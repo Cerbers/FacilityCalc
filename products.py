@@ -7,7 +7,7 @@ from functions import iterate_and_multiply_keys
 
 class Prod:
     cost: dict[str, float] = {}
-    faction: str
+    faction: str = "all"
     names: list[str] = []
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
@@ -19,9 +19,8 @@ class Prod:
         
         # All subclasses MUST have faction
         if not hasattr(cls, "faction") or not cls.faction:
-            raise ValueError(
-                f"Product '{cls.__name__}' must define a non-empty 'faction' attribute"
-            )
+             # This should default to "all" from base class if not set, but explicit check is fine
+             pass
         
         # Validate faction value
         if cls.faction not in ["warden", "colonial", "all"]:
@@ -33,7 +32,7 @@ class Prod:
     @classmethod
     def total_basic_resources(cls) -> dict[str, float]:
             if not cls.cost:
-                raise ValueError(f"No attributies in cost dictionary in {cls.__name__}")
+                raise ValueError(f"No attributes in cost dictionary in {cls.__name__}")
             total: dict[str, float] = {}
             for mat_name, qty in cls.cost.items():
                 mat = mats.materials_map.get(mat_name)
@@ -62,12 +61,19 @@ def _load_products() -> None:
             if "cost" not in data:
                 print(f"Warning: Skipping '{name}' - missing 'cost' field")
                 continue
-            if "faction" not in data or not data["faction"]:
-                print(f"Warning: Skipping '{name}' - missing or empty 'faction' field")
-                continue
             
             cost_data = data["cost"]
-            faction = data["faction"]
+            
+            # Validate materials exist
+            invalid_mats = [k for k in cost_data.keys() if k not in mats.materials_map]
+            if invalid_mats:
+                print(f"Warning: Skipping '{name}' - contains invalid materials: {invalid_mats}")
+                continue
+
+            # Handle faction - default to "all" if missing or empty
+            faction = data.get("faction", "all")
+            if not faction:
+                faction = "all"
             
             # Validate faction value before class creation
             if faction not in ["warden", "colonial", "all"]:

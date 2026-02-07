@@ -14,17 +14,12 @@ from functions import (
 # Test iterate_and_multiply_keys
 @pytest.mark.parametrize("key, expected", [("Salvage", 22.0), ("Coal", 10.0)])
 def test_iterate_and_multiply_keys_values(key: str, expected: float) -> None:
-    # Setup
     resource_costs = {"Salvage": 10.0, "Coal": 5.0}
     accumulated = {"Salvage": 2.0}
     qty = 2
 
-    # Execute
     output = iterate_and_multiply_keys(resource_costs, accumulated, qty)
 
-    # Assert
-    # Salvage: 2.0 + 10.0 * 2 = 22.0
-    # Coal: 0.0 + 5.0 * 2 = 10.0
     assert output[key] == expected
 
 def test_iterate_and_multiply_keys_length() -> None:
@@ -90,23 +85,17 @@ def test_is_user_input_in_map() -> None:
 # Test calculate_total_resources
 @pytest.mark.parametrize("resource, expected_amount", [("Salvage", 20.0), ("Coal", 10.0)])
 def test_calculate_total_resources(resource: str, expected_amount: float) -> None:
-    # Setup mock Outlaw that returns basic resources
     mock_outlaw = MagicMock()
     mock_outlaw.total_basic_resources.return_value = {"Salvage": 10.0, "Coal": 5.0}
 
     products_map = {"Outlaw": mock_outlaw}
     user_selection = [("Outlaw", 2)]
 
-    # Execute
     total = calculate_total_resources(user_selection, products_map)
 
-    # Assert
-    # Salvage: 10 * 2 = 20
-    # Coal: 5 * 2 = 10
     assert total[resource] == expected_amount
 
 def test_calculate_total_resources_no_method() -> None:
-    # Setup product without total_basic_resources method
     class ProductWithoutResources: pass
 
     products_map = {"InvalidProduct": ProductWithoutResources()}
@@ -120,29 +109,22 @@ def test_calculate_total_resources_no_method() -> None:
 def test_sum_resources_from_each_product(resource: str, expected: float) -> None:
     resource_costs = {"Salvage": 10.0, "Sulfur": 20.0}
     accumulated = {"Salvage": 5.0}
-
-    # Execute
+    
     sum_resources_from_each_product(resource_costs, accumulated)
 
-    # Assert
     assert accumulated[resource] == expected
 
 # Test get_materials
 @pytest.mark.parametrize("material, expected", [("PCmat", 15.0), ("A1", 30.0)])
 def test_get_materials(material: str, expected: float) -> None:
-    # Setup mock Chieftain with facility material costs
     mock_chieftain = MagicMock()
     mock_chieftain.cost = {"PCmat": 5.0, "A1": 10.0}
 
     products_map = {"Chieftain": mock_chieftain}
     user_selection = [("Chieftain", 3)]
-
-    # Execute
+    
     total = get_materials(user_selection, products_map)
 
-    # Assert
-    # PCmat: 5.0 * 3 = 15.0
-    # A1: 10.0 * 3 = 30.0
     assert total[material] == expected
 
 def test_get_materials_no_cost() -> None:

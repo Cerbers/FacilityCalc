@@ -175,13 +175,10 @@ class TestMainLoop:
     ) -> None:
         from main import main_loop
 
-        # Setup inputs
         mock_input.side_effect = user_inputs
 
-        # Execute
         main_loop()
 
-        # Verify outputs
         print_calls = [str(call) for call in mock_print.call_args_list]
         for expected in expected_outputs:
             assert any(expected in call for call in print_calls), f"Test '{test_id}' failed: Expected '{expected}' in output"
