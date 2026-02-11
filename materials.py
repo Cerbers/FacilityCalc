@@ -160,7 +160,7 @@ class StructurePart(Material):
 class StormCannonPart(Material):
     cost = {
         "PCmat": 300.0,
-        "RareAlloy": 40.0,
+        "RareAlloy": 20.0,
         "Thermal": 45.0
     }
 
@@ -169,6 +169,13 @@ class IntelCenterPart(Material):
         "PCmat": 50.0,
         "RareAlloy": 3.0,
         "Thermal": 15.0
+    }
+
+class UndergroundFortressPart(Material):
+    cost = {
+        "PCmat": 200.0,
+        "RareAlloy": 5.0,
+        "Thermal": 35.0
     }
 
 materials_map: dict[str, Type[Material]] = {
@@ -190,7 +197,8 @@ materials_map: dict[str, Type[Material]] = {
     "CP": ConstructionPart,
     "SP": StructurePart,
     "SCP": StormCannonPart,
-    "ICP": IntelCenterPart
+    "ICP": IntelCenterPart,
+    "UFP": UndergroundFortressPart
 }
 
 def get_switchable_materials() -> dict[str, Type[Material]]:

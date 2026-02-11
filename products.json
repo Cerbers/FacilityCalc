@@ -103,7 +103,7 @@
             "A5": 105.0,
             "A4": 105.0,
             "A3": 95.0,
-            "RareAlloy": 100.0,
+            "RareAlloy": 35.0,
             "Thermal": 45.0
         }
     },
@@ -120,9 +120,9 @@
         "faction": "all",
         "names": ["Underground Fortress", "uf"],
         "cost": {
-            "PCmat": 200.0,
-            "RareAlloy": 5.0,
-            "Thermal": 35.0
+            "CP": 1.0,
+            "SP": 1.0,
+            "UFP": 1.0
         }
     },
     "Intel Center": {
