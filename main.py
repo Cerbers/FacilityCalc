@@ -43,8 +43,12 @@ def main_loop() -> None:
     else:
         total_mats = "N/A"
     
-    print("Total resources needed: ", total)
-    print("Total Facility Materials needed: ", total_mats)
+    print("Total resources needed: ", {k: int(v) for k, v in total.items()})
+    
+    if isinstance(total_mats, dict):
+        print("Total Facility Materials needed: ", {k: int(v) for k, v in total_mats.items()})
+    else:
+        print("Total Facility Materials needed: ", total_mats)
 
 
 

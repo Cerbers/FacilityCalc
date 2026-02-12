@@ -42,7 +42,7 @@ def calculate_total_resources(user_selections: list[tuple[str, int]], Products: 
             resources: dict[str, float] = product_picked.total_basic_resources()
             # multiplies each value by set amount in users_map value
             resources = {k: v * amount for k, v in resources.items()}
-            print(f"{product_name} x{amount}: {resources}\n")
+            print(f"{product_name} x{amount}: { {k: int(v) for k, v in resources.items()} }\n")
             sum_resources_from_each_product(resources, total)
     return total
 
@@ -61,6 +61,6 @@ def get_materials(user_selections: list[tuple[str, int]], Products: dict[str, An
         if hasattr(product_picked, 'cost'):
             materials: dict[str, float] = product_picked.cost
             materials = {k: v * amount for k, v in materials.items()}
-            print(f"{product_name} x{amount}: {materials}\n")
+            print(f"{product_name} x{amount}: { {k: int(v) for k, v in materials.items()} }\n")
             sum_resources_from_each_product(materials, total)
     return total
