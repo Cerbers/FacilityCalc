@@ -178,6 +178,30 @@ class UndergroundFortressPart(Material):
         "Thermal": 35.0
     }
 
+class AircraftMechanicalPartsSmall(Material):
+    cost = {
+        "PCmat": 35.0,
+        "A3": 25.0
+    }
+
+class AircraftEngineSmall(Material):
+    cost = {
+        "PCmat": 95.0,
+        "A4": 25.0
+    }
+
+class AircraftEngineLarge(Material):
+    cost = {
+        "PCmat": 95.0,
+        "A4": 25.0
+    }
+
+class AircraftMechanicalPartsLarge(Material):
+    cost = {
+        "PCmat": 35.0,
+        "A3": 25.0
+    }
+
 materials_map: dict[str, Type[Material]] = {
     "Cmat": Cmat,
     "Coke": Coke,
@@ -198,7 +222,11 @@ materials_map: dict[str, Type[Material]] = {
     "SP": StructurePart,
     "SCP": StormCannonPart,
     "ICP": IntelCenterPart,
-    "UFP": UndergroundFortressPart
+    "UFP": UndergroundFortressPart,
+    "AMPs": AircraftMechanicalPartsSmall,
+    "AMPl": AircraftMechanicalPartsLarge,
+    "AEs": AircraftEngineSmall,
+    "AEl": AircraftEngineLarge
 }
 
 def get_switchable_materials() -> dict[str, Type[Material]]:

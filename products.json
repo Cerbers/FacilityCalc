@@ -253,5 +253,17 @@
             "NavalHull": 20.0,
             "NavalPlate": 20.0
         }
+    },
+    "Tulka White Raven": {
+        "faction": "warden",
+        "names": ["Tulka White Raven", "warden seafighter", "seafighter"],
+        "cost": {
+            "PCmat": 40.0,
+            "A2": 145.0,
+            "A3": 40.0,
+            "RareAlloy": 2.0,
+            "AEs": 1.0,
+            "AMPs": 5.0
+        }
     }
 }

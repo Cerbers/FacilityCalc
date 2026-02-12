@@ -1,5 +1,10 @@
 import pytest
-from materials import Material, Coke, Cmat, PCmat, Steel, A1, EnrichedOil, get_switchable_materials
+from materials import (
+    Material, Coke, Cmat, PCmat, Steel, A1, A3, A4, EnrichedOil,
+    AircraftMechanicalPartsSmall, AircraftMechanicalPartsLarge,
+    AircraftEngineSmall, AircraftEngineLarge,
+    get_switchable_materials
+)
 
 
 @pytest.fixture(autouse=True)
@@ -162,3 +167,61 @@ def test_steel_enriched_oil_with_offshore_platform() -> None:
     resources = Steel.total_basic_resources()
     assert "Sulfur" not in resources  # no Sulfur source in this config
     assert resources["Coal"] == pytest.approx(125.0 * 1.21 + 100.0)  # Coke Coal + EnrichedOil Coal
+
+
+def test_aircraft_mechanical_parts_small_cost() -> None:
+    """Test AircraftMechanicalPartsSmall basic cost structure."""
+    assert AircraftMechanicalPartsSmall.cost == {"PCmat": 35.0, "A3": 25.0}
+
+
+def test_aircraft_engine_small_cost() -> None:
+    """Test AircraftEngineSmall basic cost structure."""
+    assert AircraftEngineSmall.cost == {"PCmat": 95.0, "A4": 25.0}
+
+
+@pytest.mark.parametrize("resource, expected_amount", [
+    ("Salvage", 3875.0),
+    ("Sulfur", 500.0)
+])
+def test_aircraft_mechanical_parts_small_basic_resources(resource: str, expected_amount: float) -> None:
+    """Test AircraftMechanicalPartsSmall resource resolution."""
+    resources = AircraftMechanicalPartsSmall.total_basic_resources()
+    assert resources[resource] == pytest.approx(expected_amount)
+
+
+def test_aircraft_mechanical_parts_large_cost() -> None:
+    """Test AircraftMechanicalPartsLarge basic cost structure."""
+    assert AircraftMechanicalPartsLarge.cost == {"PCmat": 35.0, "A3": 25.0}
+
+
+@pytest.mark.parametrize("resource, expected_amount", [
+    ("Salvage", 3875.0),
+    ("Sulfur", 500.0)
+])
+def test_aircraft_mechanical_parts_large_basic_resources(resource: str, expected_amount: float) -> None:
+    """Test AircraftMechanicalPartsLarge resource resolution."""
+    resources = AircraftMechanicalPartsLarge.total_basic_resources()
+    assert resources[resource] == pytest.approx(expected_amount)
+
+
+@pytest.mark.parametrize("resource, expected_amount", [
+    ("Salvage", 12000.0),
+])
+def test_aircraft_engine_small_basic_resources(resource: str, expected_amount: float) -> None:
+    """Test AircraftEngineSmall resource resolution."""
+    resources = AircraftEngineSmall.total_basic_resources()
+    assert resources[resource] == pytest.approx(expected_amount)
+
+
+def test_aircraft_engine_large_cost() -> None:
+    """Test AircraftEngineLarge basic cost structure."""
+    assert AircraftEngineLarge.cost == {"PCmat": 95.0, "A4": 25.0}
+
+
+@pytest.mark.parametrize("resource, expected_amount", [
+    ("Salvage", 12000.0),
+])
+def test_aircraft_engine_large_basic_resources(resource: str, expected_amount: float) -> None:
+    """Test AircraftEngineLarge resource resolution."""
+    resources = AircraftEngineLarge.total_basic_resources()
+    assert resources[resource] == pytest.approx(expected_amount)
