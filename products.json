@@ -264,5 +264,44 @@
             "AEs": 1.0,
             "AMPs": 5.0
         }
+    },
+    "Austringer Man-O-War": {
+        "faction": "warden",
+        "names": ["Austringer Man-O-War", "austringer", "torpedo bomber", "man of war", "manowar"],
+        "cost": {
+            "PCmat": 25.0,
+            "A1": 85.0,
+            "A2": 100.0,
+            "A3": 20.0,
+            "A4": 20.0,
+            "RareAlloy": 5.0,
+            "AEs": 3.0,
+            "AMPs": 5.0
+        }
+    },
+    "Harbinger": {
+        "faction": "warden",
+        "names": ["Harbinger", "luminary", "warden fighter"],
+        "cost": {
+            "PCmat": 40.0,
+            "A1": 200.0,
+            "A4": 100.0,
+            "RareAlloy": 2.0,
+            "AEs": 1.0,
+            "AMPs": 5.0
+        }
+    },
+    "Tulka Welkinrive": {
+        "faction": "warden",
+        "names": ["Tulka Welkinrive", "Welkinrive", "Tulka P4", "warden heavy bomber"],
+        "cost": {
+            "Steel": 60.0,
+            "A3": 25.0,
+            "A4": 40.0,
+            "A5": 65.0,
+            "RareAlloy": 12.0,
+            "AEl": 2.0,
+            "AMPl": 9.0
+        }
     }
 }

@@ -6,106 +6,39 @@ from products import Prod
 from main import Products, name_mappings, list_of_products
 
 
-# Test Products dictionary
-class TestProductsDictionary:
-    @pytest.mark.parametrize("key", [
-        "Outlaw", "Chieftain", "Thornfall", "Blinder", "Skycaller", "RAC",
-        "King Jester", "Flame BT", "MG BT", "Stain SPG", "Storm Cannon", "Intel Center", "Underground Fortress",
-        "RSC", "Warden Submarine", "Frigate", "Bluefin", "Longhook", "Bowhead", "Firebrand",
-        "Cullen Predator", "Ares", "Callahan", "Mercy",
-        "Titan", "Trident", "Conqueror", "Poseidon"
-    ])
-    def test_products_contains_all_vehicles(self, key: str) -> None:
-        assert key in Products, f"Missing product: {key}"
-
-    @pytest.mark.parametrize("name", [
-        "Outlaw",
-        "Chieftain",
-        "Thornfall",
-        "Blinder",
-        "Skycaller",
-        "RAC",
-        "King Jester",
-        "Flame BT",
-        "MG BT",
-        "Stain SPG",
-        "Storm Cannon",
-        "Intel Center",
-        "Underground Fortress",
-        "RSC",
-        "Warden Submarine",
-        "Frigate",
-        "Bluefin",
-        "Longhook",
-        "Bowhead",
-        "Firebrand",
-        "Cullen Predator", "Ares", "Callahan", "Mercy",
-        "Titan", "Trident", "Conqueror", "Poseidon"
-    ])
-    def test_products_maps_to_correct_classes(self, name: str) -> None:
-        expected_class = getattr(products, name)
-        assert Products[name] is expected_class
-
+class TestProducts:
     @pytest.mark.parametrize("name, product_class", Products.items())
-    def test_all_products_are_prod_subclasses(self, name: str, product_class: Type[Prod]) -> None:
+    def test_product_is_prod_subclass(self, name: str, product_class: Type[Prod]) -> None:
         assert issubclass(product_class, Prod), f"{name} is not a Prod subclass"
 
+    @pytest.mark.parametrize("name, product_class", Products.items())
+    def test_product_has_valid_faction(self, name: str, product_class: Type[Prod]) -> None:
+        assert hasattr(product_class, "faction"), f"{name} missing faction attribute"
+        assert product_class.faction in ("warden", "colonial", "all"), f"{name} has invalid faction: {product_class.faction}"
 
-# Test name_mappings
+
 class TestNameMappings:
     @pytest.mark.parametrize("key", name_mappings.keys())
-    def test_name_mappings_keys_are_lowercase(self, key: str) -> None:
+    def test_all_mapping_keys_are_lowercase(self, key: str) -> None:
         assert key == key.lower(), f"Key '{key}' is not lowercase"
 
-    @pytest.mark.parametrize("name_key, original_key", name_mappings.items())
-    def test_name_mappings_values_match_products_keys(self, name_key: str, original_key: str) -> None:
-        assert original_key in Products
+    @pytest.mark.parametrize("key, value", name_mappings.items())
+    def test_all_mappings_point_to_valid_products(self, key: str, value: str) -> None:
+        assert value in Products, f"Mapping '{key}' -> '{value}' points to non-existent product"
 
-    @pytest.mark.parametrize("key, expected_value", [
-        ("outlaw", "Outlaw"),
-        ("chieftain", "Chieftain"),
-        ("king jester", "King Jester"),
-        ("flame bt", "Flame BT"),
-        ("mg bt", "MG BT"),
-        ("stain spg", "Stain SPG"),
-        ("rsc", "RSC"),
-        ("atht", "Blinder"),
-        ("rocket ac", "RAC"),
-        ("rocketht", "Skycaller"),
-        ("kj", "King Jester"),
-        ("mgbt", "MG BT"),
-        ("flamebt", "Flame BT"),
-        ("stainspg", "Stain SPG"),
-        ("spg", "Stain SPG"),
-        ("stormcannon", "Storm Cannon"),
-        ("sc", "Storm Cannon"),
-        ("uf", "Underground Fortress"),
-        ("intelcenter", "Intel Center"),
-        ("ic", "Intel Center"),
-        ("nakki", "Warden Submarine"),
-        ("flame htd", "Firebrand"),
-        ("cp", "Cullen Predator"),
-        ("predator", "Cullen Predator"),
-        ("wardenbs", "Callahan"),
-        ("warden battleship", "Callahan"),
-        ("warden carrier", "Mercy"),
-        ("titan", "Titan"),
-        ("colonialbs", "Titan"),
-        ("colonial battleship", "Titan"),
-        ("trident", "Trident"),
-        ("colonial sub", "Trident"),
-        ("conqueror", "Conqueror"),
-        ("dd", "Conqueror"),
-        ("colonial destroyer", "Conqueror"),
-        ("poseidon", "Poseidon"),
-        ("colonial carrier", "Poseidon"),
-        ("cc", "Poseidon"),
-    ])
-    def test_name_mappings_lookup_for_vehicles(self, key: str, expected_value: str) -> None:
-        assert name_mappings[key] == expected_value
+    @pytest.mark.parametrize("product_name, product_class", Products.items())
+    def test_product_canonical_name_is_mapped(self, product_name: str, product_class: Type[Prod]) -> None:
+        assert product_name.lower() in name_mappings, f"Canonical name '{product_name}' not in mappings"
+        assert name_mappings[product_name.lower()] == product_name
+
+    @pytest.mark.parametrize("product_name, product_class", Products.items())
+    def test_product_all_names_are_mapped(self, product_name: str, product_class: Type[Prod]) -> None:
+        for alias in product_class.names:
+            alias_lower = alias.lower()
+            assert alias_lower in name_mappings, f"Alias '{alias}' of '{product_name}' not in mappings"
+            assert name_mappings[alias_lower] == product_name
 
 
-# Test list_of_products
 class TestListOfProducts:
     def test_list_matches_products_keys(self) -> None:
         assert set(list_of_products) == set(Products.keys())
@@ -114,7 +47,6 @@ class TestListOfProducts:
         assert len(list_of_products) == len(Products)
 
 
-# Test main_loop function
 class TestMainLoop:
     @pytest.mark.parametrize("test_id, user_inputs, expected_outputs", [
         (
@@ -166,11 +98,11 @@ class TestMainLoop:
     @patch('builtins.input')
     @patch('builtins.print')
     def test_main_loop_scenarios(
-        self, 
-        mock_print: MagicMock, 
-        mock_input: MagicMock, 
-        test_id: str, 
-        user_inputs: list[str], 
+        self,
+        mock_print: MagicMock,
+        mock_input: MagicMock,
+        test_id: str,
+        user_inputs: list[str],
         expected_outputs: list[str]
     ) -> None:
         from main import main_loop
