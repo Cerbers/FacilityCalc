@@ -1,4 +1,4 @@
-from typing import Type, Union
+from typing import Type, Union, Any
 from products import Prod, name_mappings
 from vehicle_groups import Warden, Colonial, All
 from functions import pick_products, is_exit_key, get_build_quantity, is_user_input_in_map, calculate_total_resources, get_materials
@@ -10,6 +10,20 @@ Products: dict[str, Type[Prod]] = {**Warden, **Colonial, **All}
 list_of_products = list(Products.keys())
 
 
+def display_menu(warden: dict[str, Any], colonial: dict[str, Any], neutral: dict[str, Any]) -> None:
+    print("\n--- Available Vehicles ---")
+    
+    print("\nWarden:")
+    print(", ".join(sorted(warden.keys())))
+    
+    print("\nColonial:")
+    print(", ".join(sorted(colonial.keys())))
+    
+    print("\nNeutral / All:")
+    print(", ".join(sorted(neutral.keys())))
+    print("\n--------------------------")
+
+
 def main_loop() -> None:
     print("Type 1 if you want to have total materials displayed too.\n>> ")
     wants_mat_cost = input()
@@ -17,8 +31,9 @@ def main_loop() -> None:
     user_selections: list[tuple[str, int]] = []
 
     while True:
+        display_menu(Warden, Colonial, All)
         print("Type: 'done' to skip to start calculation or exit")
-        choice = pick_products(list_of_products, name_mappings)
+        choice = pick_products(list_of_products, name_mappings, prompt_text="Choose a vehicle: \n>> ")
         if choice not in list_of_products and choice != 'done':
             print(f"Invalid choice. Please choose from {list_of_products}.")
             continue

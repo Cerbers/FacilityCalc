@@ -6,8 +6,11 @@ def iterate_and_multiply_keys(data_map: dict[str, float], result: dict[str, floa
     return result
 
 
-def pick_products(options_list: list[str], data_map: dict[str, str]) -> str:
-    user_input = input(f"Choose a vehicle {options_list}: \n>> ").strip()
+def pick_products(options_list: list[str], data_map: dict[str, str], prompt_text: str = "") -> str:
+    if prompt_text is not "":
+        user_input = input(prompt_text).strip()
+    else:
+        user_input = input(f"Choose a vehicle {options_list}: \n>> ").strip()
     # take user input string and make it lower case then call the lowercase dict to invoke the correct KEY
     key = data_map.get(user_input.lower())
     if key:
