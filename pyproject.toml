@@ -8,6 +8,7 @@ packages = [{include = "FacilityCalc", from = ".."}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+dearpygui = "^2.1.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
