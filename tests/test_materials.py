@@ -12,10 +12,10 @@ def reset_recipes():
     """Reset all material recipes to defaults after each test."""
     yield
     Coke.set_recipe("Coke Furnace")
-    Cmat.set_recipe("Metal Press (+Petrol)")
+    Cmat.set_recipe("Metal Press")
     PCmat.set_recipe("Recycler")
     Steel.set_recipe("Default")
-    EnrichedOil.set_recipe("Oil Refinery (+Heavy Oil)")
+    EnrichedOil.set_recipe("Oil Refinery")
 
 
 

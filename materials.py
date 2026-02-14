@@ -1,4 +1,6 @@
 from typing import Type
+import json
+import os
 from functions import iterate_and_multiply_keys
 
 basic_resources: tuple[str, ...] = ("Salvage", "Coal", "Sulfur", "Rare Metals", "Components") # reminder of what the objects are breakdowned to
@@ -36,7 +38,7 @@ class Coke(Material):
     recipes = {
         "Coal Refinery Basic": {"Coal": 1.11},
         "Coke Furnace": {"Coal": 1.21},
-        "Advanced Coal Liquefier (+Heavy Oil)": {"Coal": 1.15},
+        "Advanced Coal Liquefier": {"Coal": 1.15},
     }
     cost = recipes["Coke Furnace"]
     current_recipe = "Coke Furnace"
@@ -45,16 +47,16 @@ class Cmat(Material):
     recipes = {
         "Material Factory": {"Salvage": 10.0},
         "Assembly Bay": {"Salvage": 25.0},
-        "Metal Press (+Petrol)": {"Salvage": 5.0},
+        "Metal Press": {"Salvage": 5.0},
         "Smelter": {"Salvage": 5.0, "Coke": 8.333},
     }
-    cost = recipes["Metal Press (+Petrol)"]
-    current_recipe = "Metal Press (+Petrol)"
+    cost = recipes["Metal Press"]
+    current_recipe = "Metal Press"
 
 class PCmat(Material):
     recipes = {
         "Metalworks": {"Cmat": 3.0, "Components": 20.0},
-        "Blast Furnace (+Heavy Oil)": {"Cmat": 1.0, "Components": 18.333},
+        "Blast Furnace": {"Cmat": 1.0, "Components": 18.333},
         "Recycler": {"Cmat": 15.0, "Salvage": 25.0},  # Salvage in place of 'metal beam'
     }
     cost = recipes["Recycler"]
@@ -84,16 +86,16 @@ class A4(Material):
 
 class EnrichedOil(Material):
     recipes = {
-        "Oil Refinery (+Heavy Oil)": {"Sulfur": 60.0},
+        "Oil Refinery": {"Sulfur": 60.0},
         "Offshore Platform": {"Coal": 100.0},
     }
-    cost = recipes["Oil Refinery (+Heavy Oil)"]
-    current_recipe = "Oil Refinery (+Heavy Oil)"
+    cost = recipes["Oil Refinery"]
+    current_recipe = "Oil Refinery"
 
 class Steel(Material):
     recipes = {
         "Default": {"PCmat": 3.0, "Coke": 125.0, "Sulfur": 60.0},
-        "Heavy Oil (+Heavy Oil)": {"PCmat": 3.0, "Coke": 200.0, "Sulfur": 65.0},
+        "Heavy Oil": {"PCmat": 3.0, "Coke": 200.0, "Sulfur": 65.0},
         "Enriched Oil": {"PCmat": 3.0, "Coke": 125.0, "EnrichedOil": 1.0},
     }
     cost = recipes["Default"]
@@ -232,3 +234,26 @@ materials_map: dict[str, Type[Material]] = {
 def get_switchable_materials() -> dict[str, Type[Material]]:
     """Return materials that have alternative recipes."""
     return {name: cls for name, cls in materials_map.items() if cls.recipes}
+
+
+def load_recipe_preferences() -> None:
+    """Load recipe preferences from JSON file if it exists."""
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    prefs_path = os.path.join(current_dir, "recipe_preferences.json")
+
+    if not os.path.exists(prefs_path):
+        return
+
+    try:
+        with open(prefs_path, "r") as f:
+            prefs = json.load(f)
+
+        for mat_name, recipe_name in prefs.items():
+            mat_class = materials_map.get(mat_name)
+            if mat_class and mat_class.recipes:
+                try:
+                    mat_class.set_recipe(recipe_name)
+                except ValueError as e:
+                    print(f"Warning: {e}")
+    except (json.JSONDecodeError, IOError) as e:
+        print(f"Warning: Failed to load preferences: {e}")

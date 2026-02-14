@@ -2,6 +2,7 @@ from typing import Type, Union, Any
 from products import Prod, name_mappings
 from vehicle_groups import Warden, Colonial, All
 from functions import pick_products, is_exit_key, get_build_quantity, is_user_input_in_map, calculate_total_resources, get_materials
+from materials import load_recipe_preferences
 
 
 
@@ -25,6 +26,7 @@ def display_menu(warden: dict[str, Any], colonial: dict[str, Any], neutral: dict
 
 
 def main_loop() -> None:
+    load_recipe_preferences()
     print("Type 1 if you want to have total materials displayed too.\n>> ")
     wants_mat_cost = input()
 
