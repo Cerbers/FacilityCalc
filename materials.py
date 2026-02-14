@@ -240,12 +240,33 @@ def load_recipe_preferences() -> None:
         with open(prefs_path, "r") as f:
             prefs = json.load(f)
 
+        if not isinstance(prefs, dict):
+            print(f"Warning: preferences file is not a valid JSON object, using defaults")
+            return
+
         for mat_name, recipe_name in prefs.items():
+            if not isinstance(mat_name, str):
+                print(f"Warning: Skipping invalid material name '{mat_name}', using defaults")
+                continue
+
             mat_class = materials_map.get(mat_name)
-            if mat_class and mat_class.recipes:
-                try:
-                    mat_class.set_recipe(recipe_name)
-                except ValueError as e:
-                    print(f"Warning: {e}")
+
+            if not mat_class:
+                print(f"Warning: Unknown material '{mat_name}' in preferences, using defaults")
+                continue
+
+            if not mat_class.recipes:
+                print(f"Warning: Material '{mat_name}' has no recipes, using defaults")
+                continue
+
+            if not isinstance(recipe_name, str):
+                print(f"Warning: Invalid recipe '{recipe_name}' for '{mat_name}', using defaults")
+                continue
+
+            try:
+                mat_class.set_recipe(recipe_name)
+            except ValueError as e:
+                print(f"Warning: {e}")
+
     except (json.JSONDecodeError, IOError) as e:
         print(f"Warning: Failed to load preferences: {e}")

@@ -1,15 +1,22 @@
 import pytest
+import json
+from unittest.mock import patch, mock_open
 from materials import (
     Material, Coke, Cmat, PCmat, Steel, A1, A3, A4, EnrichedOil,
     AircraftMechanicalPartsSmall, AircraftMechanicalPartsLarge,
     AircraftEngineSmall, AircraftEngineLarge,
-    get_switchable_materials
+    get_switchable_materials, load_recipe_preferences
 )
 
 
 @pytest.fixture(autouse=True)
 def reset_recipes():
-    """Reset all material recipes to defaults after each test."""
+    """Reset all material recipes to defaults before and after each test."""
+    Coke.set_recipe("Coke Furnace")
+    Cmat.set_recipe("Metal Press")
+    PCmat.set_recipe("Recycler")
+    Steel.set_recipe("Default")
+    EnrichedOil.set_recipe("Oil Refinery")
     yield
     Coke.set_recipe("Coke Furnace")
     Cmat.set_recipe("Metal Press")
@@ -225,3 +232,144 @@ def test_aircraft_engine_large_basic_resources(resource: str, expected_amount: f
     """Test AircraftEngineLarge resource resolution."""
     resources = AircraftEngineLarge.total_basic_resources()
     assert resources[resource] == pytest.approx(expected_amount)
+
+
+# === Recipe preferences loading tests ===
+
+def test_load_preferences_valid_file(capsys) -> None:
+    """Test that valid preferences file loads recipes correctly."""
+    prefs_json = '{"Coke": "Coal Refinery Basic", "Cmat": "Smelter"}'
+
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=prefs_json)):
+            with patch("json.load", return_value={"Coke": "Coal Refinery Basic", "Cmat": "Smelter"}):
+                load_recipe_preferences()
+
+    assert Coke.cost == {"Coal": 1.11}
+    assert Cmat.cost == {"Salvage": 5.0, "Coke": 8.333}
+
+
+def test_load_preferences_invalid_recipe_name(capsys) -> None:
+    """Test that invalid recipe name falls back to default with warning."""
+    prefs_json = '{"Coke": "Nonexistent Recipe"}'
+
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=prefs_json)):
+            with patch("json.load", return_value={"Coke": "Nonexistent Recipe"}):
+                load_recipe_preferences()
+
+    assert Coke.cost == {"Coal": 1.21}  # Default: Coke Furnace
+    captured = capsys.readouterr()
+    assert "Warning" in captured.out
+
+
+def test_load_preferences_unknown_material(capsys) -> None:
+    """Test that unknown material in preferences is skipped with warning."""
+    prefs_json = '{"UnknownMaterial": "SomeRecipe", "Coke": "Coke Furnace"}'
+
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=prefs_json)):
+            with patch("json.load", return_value={"UnknownMaterial": "SomeRecipe", "Coke": "Coke Furnace"}):
+                load_recipe_preferences()
+
+    assert Coke.cost == {"Coal": 1.21}  # Should still work
+    captured = capsys.readouterr()
+    assert "Unknown material" in captured.out
+
+
+def test_load_preferences_missing_file(capsys) -> None:
+    """Test that missing preferences file uses defaults without error."""
+    with patch("os.path.exists", return_value=False):
+        load_recipe_preferences()
+
+    # Should remain at default
+    assert Coke.cost == {"Coal": 1.21}
+
+
+def test_load_preferences_malformed_json(capsys) -> None:
+    """Test that malformed JSON uses defaults with warning."""
+    malformed_json = "{ invalid json }"
+
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=malformed_json)):
+            with patch("json.load", side_effect=json.JSONDecodeError("Expecting property name", "", 0)):
+                load_recipe_preferences()
+
+    assert Coke.cost == {"Coal": 1.21}  # Default
+    captured = capsys.readouterr()
+    assert "Warning" in captured.out
+
+
+def test_load_preferences_empty_object(capsys) -> None:
+    """Test that empty object {} uses all defaults."""
+    prefs_json = "{}"
+
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=prefs_json)):
+            with patch("json.load", return_value={}):
+                load_recipe_preferences()
+
+    # Should remain at defaults
+    assert Coke.cost == {"Coal": 1.21}
+    assert Cmat.cost == {"Salvage": 5.0}
+
+
+def test_load_preferences_null_recipe_value(capsys) -> None:
+    """Test that null recipe value is handled gracefully with warning."""
+    prefs_json = '{"Coke": null}'
+
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=prefs_json)):
+            with patch("json.load", return_value={"Coke": None}):
+                load_recipe_preferences()
+
+    assert Coke.cost == {"Coal": 1.21}  # Default
+    captured = capsys.readouterr()
+    assert "Warning" in captured.out
+
+
+def test_load_preferences_non_string_recipe(capsys) -> None:
+    """Test that non-string recipe value is handled gracefully with warning."""
+    prefs_json = '{"Coke": 123}'
+
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=prefs_json)):
+            with patch("json.load", return_value={"Coke": 123}):
+                load_recipe_preferences()
+
+    assert Coke.cost == {"Coal": 1.21}  # Default
+    captured = capsys.readouterr()
+    assert "Warning" in captured.out
+
+
+def test_load_preferences_empty_file(capsys) -> None:
+    """Test that empty file uses defaults with warning."""
+    empty_json = ""
+
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=empty_json)):
+            with patch("json.load", side_effect=json.JSONDecodeError("Expecting value", "", 0)):
+                load_recipe_preferences()
+
+    assert Coke.cost == {"Coal": 1.21}  # Default
+    captured = capsys.readouterr()
+    assert "Warning" in captured.out
+
+
+def test_load_preferences_partially_valid_json(capsys) -> None:
+    """Test that partially valid JSON applies valid entries and skips invalid ones."""
+    prefs_json = '{"Coke": "Coal Refinery Basic", "UnknownMaterial": "SomeRecipe", "Cmat": "Smelter"}'
+
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=prefs_json)):
+            with patch("json.load", return_value={
+                "Coke": "Coal Refinery Basic",
+                "UnknownMaterial": "SomeRecipe",
+                "Cmat": "Smelter"
+            }):
+                load_recipe_preferences()
+
+    assert Coke.cost == {"Coal": 1.11}  # Applied valid preference
+    assert Cmat.cost == {"Salvage": 5.0, "Coke": 8.333}  # Applied valid preference
+    captured = capsys.readouterr()
+    assert "Unknown material" in captured.out
