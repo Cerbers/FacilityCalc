@@ -6,6 +6,20 @@ def iterate_and_multiply_keys(data_map: dict[str, float], result: dict[str, floa
     return result
 
 
+def calculate_total_basic_resources(cost: dict[str, float], materials_map: dict[str, Any]) -> dict[str, float]:
+    if not cost:
+        raise ValueError("No attributes in cost dictionary")
+    total: dict[str, float] = {}
+    for mat_name, qty in cost.items():
+        mat = materials_map.get(mat_name)
+        if mat and hasattr(mat, "total_basic_resources"):
+            resources = mat.total_basic_resources()
+        else:
+            resources = {mat_name: 1.0}
+        iterate_and_multiply_keys(resources, total, qty)
+    return total
+
+
 def pick_products(options_list: list[str], data_map: dict[str, str], prompt_text: str = "") -> str:
     if prompt_text is not "":
         user_input = input(prompt_text).strip()

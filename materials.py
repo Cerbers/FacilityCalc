@@ -1,7 +1,7 @@
 from typing import Type
 import json
 import os
-from functions import iterate_and_multiply_keys
+from functions import iterate_and_multiply_keys, calculate_total_basic_resources
 
 basic_resources: tuple[str, ...] = ("Salvage", "Coal", "Sulfur", "Rare Metals", "Components") # reminder of what the objects are breakdowned to
 
@@ -22,17 +22,9 @@ class Material:
 
     @classmethod
     def total_basic_resources(cls) -> dict[str, float]:
-            if not cls.cost:
-                raise ValueError(f"No attributes in cost dictionary in {cls.__name__}")
-            total: dict[str, float] = {}
-            for mat_name, qty in cls.cost.items():
-                mat = materials_map.get(mat_name)
-                if mat and hasattr(mat, "total_basic_resources"):
-                    resources = mat.total_basic_resources()
-                else:
-                    resources = {mat_name: 1.0}
-                iterate_and_multiply_keys(resources, total, qty)
-            return total
+        if not cls.cost:
+            raise ValueError(f"No attributes in cost dictionary in {cls.__name__}")
+        return calculate_total_basic_resources(cls.cost, materials_map)
 
 class Coke(Material):
     recipes = {

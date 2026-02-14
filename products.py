@@ -2,7 +2,7 @@ from typing import Any
 import json
 import os
 import materials as mats
-from functions import iterate_and_multiply_keys
+from functions import iterate_and_multiply_keys, calculate_total_basic_resources
 
 
 class Prod:
@@ -31,17 +31,9 @@ class Prod:
 
     @classmethod
     def total_basic_resources(cls) -> dict[str, float]:
-            if not cls.cost:
-                raise ValueError(f"No attributes in cost dictionary in {cls.__name__}")
-            total: dict[str, float] = {}
-            for mat_name, qty in cls.cost.items():
-                mat = mats.materials_map.get(mat_name)
-                if mat and hasattr(mat, "total_basic_resources"):
-                    resources = mat.total_basic_resources()
-                else:
-                    resources = {mat_name: 1.0}
-                iterate_and_multiply_keys(resources, total, qty)
-            return total
+        if not cls.cost:
+            raise ValueError(f"No attributes in cost dictionary in {cls.__name__}")
+        return calculate_total_basic_resources(cls.cost, mats.materials_map)
 
 # Global dictionary to map all acceptable names to product names
 name_mappings: dict[str, str] = {}
