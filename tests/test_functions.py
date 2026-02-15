@@ -11,7 +11,7 @@ from functions import (
     get_materials
 )
 
-# Test iterate_and_multiply_keys
+
 @pytest.mark.parametrize("key, expected", [("Salvage", 22.0), ("Coal", 10.0)])
 def test_iterate_and_multiply_keys_values(key: str, expected: float) -> None:
     resource_costs = {"Salvage": 10.0, "Coal": 5.0}
@@ -36,7 +36,7 @@ def test_iterate_and_multiply_keys_empty_map() -> None:
     output = iterate_and_multiply_keys(resource_costs, accumulated, qty)
     assert output == {"Sulfur": 1.0}
 
-# Test pick_products
+
 def test_pick_products_valid_key() -> None:
     options = ["Outlaw", "Chieftain"]
     lowercase_map = {"outlaw": "Outlaw", "chieftain": "Chieftain"}
@@ -58,7 +58,7 @@ def test_pick_products_invalid_key() -> None:
         result = pick_products(options, lowercase_map)
         assert result == "Silverhand"  # Returns input as is if not found
 
-# Test is_exit_key
+
 def test_is_exit_key_true() -> None:
     assert is_exit_key("done") is True
 
@@ -66,7 +66,7 @@ def test_is_exit_key_false() -> None:
     assert is_exit_key("exit") is False
     assert is_exit_key("Done") is False  # Case sensitive based on implementation
 
-# Test get_build_quantity
+
 def test_get_build_quantity_valid_int() -> None:
     with patch('builtins.input', return_value="5"):
         assert get_build_quantity("Outlaw") == 5
@@ -76,13 +76,13 @@ def test_get_build_quantity_invalid_then_valid() -> None:
     with patch('builtins.input', side_effect=["abc", "10"]):
         assert get_build_quantity("Chieftain") == 10
 
-# Test is_user_input_in_map
+
 def test_is_user_input_in_map() -> None:
     products_map = {"Outlaw": 1, "Chieftain": 2}
     assert is_user_input_in_map("Outlaw", products_map) is True
     assert is_user_input_in_map("Silverhand", products_map) is False
 
-# Test calculate_total_resources
+
 @pytest.mark.parametrize("resource, expected_amount", [("Salvage", 20.0), ("Coal", 10.0)])
 def test_calculate_total_resources(resource: str, expected_amount: float) -> None:
     mock_outlaw = MagicMock()
@@ -104,7 +104,7 @@ def test_calculate_total_resources_no_method() -> None:
     total = calculate_total_resources(user_selection, products_map)
     assert total == {}
 
-# Test sum_resources_from_each_product
+
 @pytest.mark.parametrize("resource, expected", [("Salvage", 15.0), ("Sulfur", 20.0)])
 def test_sum_resources_from_each_product(resource: str, expected: float) -> None:
     resource_costs = {"Salvage": 10.0, "Sulfur": 20.0}
@@ -114,7 +114,7 @@ def test_sum_resources_from_each_product(resource: str, expected: float) -> None
 
     assert accumulated[resource] == expected
 
-# Test get_materials
+
 @pytest.mark.parametrize("material, expected", [("PCmat", 15.0), ("A1", 30.0)])
 def test_get_materials(material: str, expected: float) -> None:
     mock_chieftain = MagicMock()
