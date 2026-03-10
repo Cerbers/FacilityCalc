@@ -67,7 +67,7 @@ def pick_products(options_list: list[str], data_map: dict[str, str], prompt_text
     Returns:
         str: The chosen product name.
     """
-    if prompt_text is not "":
+    if prompt_text != "":
         user_input = input(prompt_text).strip()
     else:
         user_input = input(f"Choose a vehicle {options_list}: \n>> ").strip()
@@ -102,7 +102,10 @@ def get_build_quantity(product_name: str) -> int:
         int: Quantity of the product to build.
     """
     try:
-        quantity = int(input(f"How many {product_name} do you want to build?\n>> "))
+        user_input = input(f"How many {product_name} do you want to build?\n>> ").strip()
+        if user_input.lower() == "exit":
+            raise SystemExit(0)
+        quantity = int(user_input)
         return quantity
     except ValueError:
         print("Not a number, type a number.\n")

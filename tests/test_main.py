@@ -114,3 +114,57 @@ class TestMainLoop:
         print_calls = [str(call) for call in mock_print.call_args_list]
         for expected in expected_outputs:
             assert any(expected in call for call in print_calls), f"Test '{test_id}' failed: Expected '{expected}' in output"
+
+
+class TestMainLoopExit:
+    @patch('builtins.input')
+    @patch('builtins.print')
+    def test_exit_at_vehicle_selection(self, mock_print: MagicMock, mock_input: MagicMock) -> None:
+        """Typing 'exit' at the vehicle prompt returns without calculating."""
+        from main import main_loop
+        mock_input.side_effect = ["0", "exit"]
+        main_loop()  # must return normally, not raise
+        print_calls = [str(call) for call in mock_print.call_args_list]
+        assert not any("Calculating resources" in call for call in print_calls)
+
+    @patch('builtins.input', side_effect=["0", "EXIT"])
+    @patch('builtins.print')
+    def test_exit_uppercase_at_vehicle_selection(self, mock_print: MagicMock, mock_input: MagicMock) -> None:
+        """'EXIT' (uppercase) at the vehicle prompt also quits."""
+        from main import main_loop
+        main_loop()
+
+    @patch('builtins.input', side_effect=["0", "Exit"])
+    @patch('builtins.print')
+    def test_exit_mixed_case_at_vehicle_selection(self, mock_print: MagicMock, mock_input: MagicMock) -> None:
+        """'Exit' (mixed case) at the vehicle prompt also quits."""
+        from main import main_loop
+        main_loop()
+
+    @patch('builtins.input')
+    @patch('builtins.print')
+    def test_exit_at_quantity_prompt(self, mock_print: MagicMock, mock_input: MagicMock) -> None:
+        """Typing 'exit' at the quantity prompt raises SystemExit."""
+        from main import main_loop
+        mock_input.side_effect = ["0", "Outlaw", "exit"]
+        with pytest.raises(SystemExit):
+            main_loop()
+
+    @patch('builtins.input')
+    @patch('builtins.print')
+    def test_exit_at_quantity_prompt_case_insensitive(self, mock_print: MagicMock, mock_input: MagicMock) -> None:
+        """'EXIT' at quantity prompt also raises SystemExit."""
+        from main import main_loop
+        mock_input.side_effect = ["0", "Outlaw", "EXIT"]
+        with pytest.raises(SystemExit):
+            main_loop()
+
+    @patch('builtins.input')
+    @patch('builtins.print')
+    def test_exit_after_adding_products(self, mock_print: MagicMock, mock_input: MagicMock) -> None:
+        """Exit at vehicle prompt after already selecting products - no calculation runs."""
+        from main import main_loop
+        mock_input.side_effect = ["0", "Outlaw", "2", "exit"]
+        main_loop()
+        print_calls = [str(call) for call in mock_print.call_args_list]
+        assert not any("Calculating resources" in call for call in print_calls)

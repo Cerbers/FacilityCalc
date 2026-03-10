@@ -34,8 +34,10 @@ def main_loop() -> None:
 
     while True:
         display_menu(Warden, Colonial, All)
-        print("Type: 'done' to skip to start calculation or exit")
+        print("Type: 'done' to finalize selection, or 'exit' to quit")
         choice = pick_products(list_of_products, name_mappings, prompt_text="Choose a vehicle: \n>> ")
+        if choice.lower() == 'exit':
+            return
         if choice not in list_of_products and choice != 'done':
             print(f"Invalid choice. Please choose from {list_of_products}.")
             continue
