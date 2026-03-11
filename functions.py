@@ -24,14 +24,15 @@ def iterate_and_multiply_keys(data_map: dict[str, float], result: dict[str, floa
     return result
 
 
-def calculate_total_basic_resources(cost: dict[str, float], materials_map: dict[str, Any]) -> dict[str, float]:
+def calculate_total_basic_resources(cost: dict[str, float], materials_map: dict[str, Any], depth: int = 0) -> dict[str, float]:
     """
     Calculates total basic resources needed for building products.
-    
+
     Args:
         cost (dict[str, float]): Dictionary of materials needed for each product.
         materials_map (dict[str, Any]): Dictionary mapping material names to material classes.
-    
+        depth (int): Current recursion depth; raises RecursionError if it exceeds 10.
+
     Returns:
         dict[str, float]: Dictionary of total basic resources needed.
 
@@ -39,16 +40,21 @@ def calculate_total_basic_resources(cost: dict[str, float], materials_map: dict[
         cost = {"PCmat": 100.0}
         materials_map = {"PCmat": PCmat}
         calculate_total_basic_resources(cost, materials_map)
-        {"Salvage": 10000.0} // breakdown: 
+        {"Salvage": 10000.0} // breakdown:
         PCmat>Cmat + Salvage> Salvage
     """
+    if depth > 10:
+        raise RecursionError(
+            "Recursion depth exceeded (>10). Check products.json or materials.py "
+            "for circular dependencies."
+        )
     if not cost:
         raise ValueError("No attributes in cost dictionary")
     total: dict[str, float] = {}
     for mat_name, qty in cost.items():
         mat = materials_map.get(mat_name)
         if mat and hasattr(mat, "total_basic_resources"):
-            resources = mat.total_basic_resources()
+            resources = mat.total_basic_resources(depth + 1)
         else:
             resources = {mat_name: 1.0}
         iterate_and_multiply_keys(resources, total, qty)
@@ -142,8 +148,12 @@ def calculate_total_resources(user_selections: list[tuple[str, int]], Products: 
     for product_name, amount in user_selections:
         product_picked = Products[product_name]
         if hasattr(product_picked, 'total_basic_resources'):
-            # throws the return of the method in resources
-            resources: dict[str, float] = product_picked.total_basic_resources()
+            try:
+                # throws the return of the method in resources
+                resources: dict[str, float] = product_picked.total_basic_resources()
+            except RecursionError as e:
+                print(f"Error calculating resources for '{product_name}': {e}\n")
+                continue
             # multiplies each value by set amount in users_map value
             resources = {k: v * amount for k, v in resources.items()}
             print(f"{product_name} x{amount}: { {k: int(v) for k, v in resources.items()} }\n")
