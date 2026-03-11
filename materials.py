@@ -21,10 +21,10 @@ class Material:
         cls.current_recipe = recipe_name
 
     @classmethod
-    def total_basic_resources(cls) -> dict[str, float]:
+    def total_basic_resources(cls, depth: int = 0) -> dict[str, float]:
         if not cls.cost:
             raise ValueError(f"No attributes in cost dictionary in {cls.__name__}")
-        return calculate_total_basic_resources(cls.cost, materials_map)
+        return calculate_total_basic_resources(cls.cost, materials_map, depth)
 
 class Coke(Material):
     recipes = {
