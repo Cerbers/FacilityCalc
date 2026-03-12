@@ -1,4 +1,5 @@
 import io
+import re
 import contextlib
 import dearpygui.dearpygui as dpg
 
@@ -13,11 +14,36 @@ _output_font: int | None = None
 _output_font_bold: int | None = None
 
 
+# Matches lines like "Chieftain x10: {'Salvage': 14500, ...}"
+_PRODUCT_LINE_RE = re.compile(r'^(.+?) x(\d+): (.+)$')
+
+
 # --- Helpers ---
 
 def append_output(text: str) -> None:
     dpg.add_text(text, parent="output_panel", wrap=0)
     dpg.set_y_scroll("output_panel", dpg.get_y_scroll_max("output_panel"))
+
+
+def _append_product_line(name: str, qty: int, data: str) -> None:
+    """Render a product result line with the product name in bold."""
+    with dpg.group(horizontal=True, parent="output_panel"):
+        bold_item = dpg.add_text(f"{name} x{qty}")
+        font = _output_font_bold if _output_font_bold is not None else _output_font
+        if font is not None:
+            dpg.bind_item_font(bold_item, font)
+        dpg.add_text(f": {data}", wrap=0)
+    dpg.set_y_scroll("output_panel", dpg.get_y_scroll_max("output_panel"))
+
+
+def _emit_lines(captured: str) -> None:
+    """Emit captured stdout lines, bolding product name lines."""
+    for line in captured.splitlines():
+        m = _PRODUCT_LINE_RE.match(line)
+        if m and m.group(1) in Products:
+            _append_product_line(m.group(1), int(m.group(2)), m.group(3))
+        else:
+            append_output(line)
 
 
 def refresh_selection_list() -> None:
@@ -56,8 +82,7 @@ def run_calculation_callback() -> None:
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
         total = calculate_total_resources(selected_products, Products)
-    for line in buf.getvalue().splitlines():
-        append_output(line)
+    _emit_lines(buf.getvalue())
 
     append_output(f"Total basic resources:  { {k: int(v) for k, v in total.items()} }")
 
@@ -67,8 +92,7 @@ def run_calculation_callback() -> None:
         total_mats = get_materials(selected_products, Products)
     append_output("")
     append_output("--- Facility Materials breakdown ---")
-    for line in buf2.getvalue().splitlines():
-        append_output(line)
+    _emit_lines(buf2.getvalue())
     append_output(f"Total facility materials: { {k: int(v) for k, v in total_mats.items()} }")
     append_output("")
 
