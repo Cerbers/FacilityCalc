@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from typing import Type
-import products
 from products import Prod
 from main import Products, name_mappings, list_of_products
 

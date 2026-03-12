@@ -169,7 +169,7 @@ def build_theme() -> int:
             dpg.add_theme_style(dpg.mvStyleVar_TabRounding,    4)
             dpg.add_theme_style(dpg.mvStyleVar_FrameRounding,  4)
             dpg.add_theme_style(dpg.mvStyleVar_GrabRounding,   4)
-    return theme_id  # type: ignore[return-value]
+    return theme_id  # type: ignore[no-any-return]
 
 
 # --- Main ---
