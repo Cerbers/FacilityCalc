@@ -9,6 +9,8 @@ from materials import get_switchable_materials, load_recipe_preferences
 # --- State ---
 selected_products: list[tuple[str, int]] = []
 recipe_combo_tags: dict[str, str] = {}
+_output_font: int | None = None
+_output_font_bold: int | None = None
 
 
 # --- Helpers ---
@@ -131,10 +133,24 @@ def build_theme() -> int:
 
 # --- Main ---
 
+def _load_fonts() -> None:
+    global _output_font, _output_font_bold
+    with dpg.font_registry():
+        try:
+            _output_font = dpg.add_font("C:/Windows/Fonts/consola.ttf", 13)
+        except Exception:
+            pass
+        try:
+            _output_font_bold = dpg.add_font("C:/Windows/Fonts/consolab.ttf", 13)
+        except Exception:
+            pass
+
+
 def main() -> None:
     load_recipe_preferences()
 
     dpg.create_context()
+    _load_fonts()
     theme_id = build_theme()
 
     with dpg.window(tag="primary_window"):
@@ -237,6 +253,8 @@ def main() -> None:
                 )
 
     dpg.bind_theme(theme_id)
+    if _output_font is not None:
+        dpg.bind_item_font("output_panel", _output_font)
     dpg.create_viewport(title="FacilityCalc", width=1100, height=680)
     dpg.setup_dearpygui()
     dpg.show_viewport()
