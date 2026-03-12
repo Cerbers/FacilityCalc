@@ -11,6 +11,7 @@ from functions import (
     sum_resources_from_each_product,
     get_materials
 )
+from materials import Steel, Coke, Cmat, PCmat, EnrichedOil, materials_map
 def _make_cyclic_map() -> dict:
     """Build a materials map with a circular dependency for recursion-limit tests.
 
@@ -188,3 +189,64 @@ def test_calculate_total_resources_handles_recursion_error(capsys) -> None:
     captured = capsys.readouterr()
     assert "Error" in captured.out
     assert "BrokenProduct" in captured.out
+
+
+# === Recipe integration tests ===
+
+@pytest.fixture(autouse=True)
+def reset_recipes():
+    """Reset all material recipes to defaults before and after each test."""
+    Steel.set_recipe("Enriched Oil")
+    Coke.set_recipe("Coke Furnace")
+    Cmat.set_recipe("Metal Press")
+    PCmat.set_recipe("Recycler")
+    EnrichedOil.set_recipe("Oil Refinery")
+    yield
+    Steel.set_recipe("Enriched Oil")
+    Coke.set_recipe("Coke Furnace")
+    Cmat.set_recipe("Metal Press")
+    PCmat.set_recipe("Recycler")
+    EnrichedOil.set_recipe("Oil Refinery")
+
+
+class _SteelProduct:
+    """Minimal product-like class with Steel as its only cost."""
+    cost: dict[str, float] = {"Steel": 1}
+
+    @classmethod
+    def total_basic_resources(cls, depth: int = 0) -> dict[str, float]:
+        return calculate_total_basic_resources(cls.cost, materials_map, depth)
+
+
+_STEEL_PRODUCTS: dict[str, type[_SteelProduct]] = {"SteelWidget": _SteelProduct}
+
+
+def test_recipe_change_affects_calculate_total_resources() -> None:
+    """Switching Steel recipe must change the output of calculate_total_resources."""
+    total_before = calculate_total_resources([("SteelWidget", 1)], _STEEL_PRODUCTS)
+
+    Steel.set_recipe("Heavy Oil")
+    total_after = calculate_total_resources([("SteelWidget", 1)], _STEEL_PRODUCTS)
+
+    assert total_before != total_after
+
+
+def test_recipe_change_affects_coal_amount() -> None:
+    """Switching Steel from Enriched Oil to Heavy Oil changes Coal consumption."""
+    total_enriched = calculate_total_resources([("SteelWidget", 1)], _STEEL_PRODUCTS)
+
+    Steel.set_recipe("Heavy Oil")
+    total_heavy = calculate_total_resources([("SteelWidget", 1)], _STEEL_PRODUCTS)
+
+    assert total_enriched.get("Coal", 0) != total_heavy.get("Coal", 0)
+
+
+def test_recipe_revert_restores_original_output() -> None:
+    """Switching recipe then reverting must produce identical output."""
+    total_original = calculate_total_resources([("SteelWidget", 1)], _STEEL_PRODUCTS)
+
+    Steel.set_recipe("Heavy Oil")
+    Steel.set_recipe("Enriched Oil")
+    total_reverted = calculate_total_resources([("SteelWidget", 1)], _STEEL_PRODUCTS)
+
+    assert total_original == total_reverted
