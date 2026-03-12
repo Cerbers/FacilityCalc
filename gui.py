@@ -14,7 +14,7 @@ recipe_combo_tags: dict[str, str] = {}
 # --- Helpers ---
 
 def append_output(text: str) -> None:
-    dpg.add_text(text, parent="output_panel")
+    dpg.add_text(text, parent="output_panel", wrap=0)
     dpg.set_y_scroll("output_panel", dpg.get_y_scroll_max("output_panel"))
 
 
