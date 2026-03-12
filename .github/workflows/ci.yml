@@ -8,22 +8,27 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Python + Poetry cache
+        uses: actions/setup-python@v6
         with:
           python-version: "3.10"
+          cache: 'poetry'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
 
       - name: Install dependencies
-        run: pip install pytest mypy
+        run: poetry install --no-root
 
-      - name: Run tests
-        run: python -m pytest tests/ -v
+      - name: Run tests + coverage
+        run: poetry run pytest tests/ -v --cov=. --cov-report=term-missing
 
       - name: Type check
-        run: python -m mypy .
+        run: poetry run mypy .
