@@ -1,132 +1,157 @@
 """
-GUI Phase 1 tests — business-logic layer used by the GUI.
-
-These mirror the scenarios in test_main.py::TestMainLoop but call
-calculate_total_resources / get_materials directly instead of mocking stdin/stdout,
-because the GUI drives those functions without a CLI loop.
+ GUI tests for callback-level happy paths.
 """
+import builtins
+from collections.abc import Iterator
+from unittest.mock import call, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
-from typing import Type
 
-from products import Prod, name_mappings
-from main import Products, list_of_products
-from functions import calculate_total_resources, get_materials
+import gui
 
 
-# ---------------------------------------------------------------------------
-# Product / alias resolution (the GUI uses name_mappings for text input
-# fallback; for dropdowns it uses list_of_products directly)
-# ---------------------------------------------------------------------------
+@pytest.fixture(autouse=True)
+def reset_gui_state() -> Iterator[None]:
+    original_selected_products = list(gui.selected_products)
+    original_recipe_combo_tags = dict(gui.recipe_combo_tags)
+    original_output_font = gui._output_font
+    original_output_font_bold = gui._output_font_bold
 
-class TestGuiProductSelection:
-    def test_canonical_names_present(self) -> None:
-        assert "Outlaw" in Products
-        assert "Chieftain" in Products
+    gui.selected_products.clear()
+    gui.recipe_combo_tags.clear()
+    gui._output_font = None
+    gui._output_font_bold = None
 
-    def test_case_insensitive_lookup(self) -> None:
-        assert name_mappings.get("outlaw") == "Outlaw"
-        assert name_mappings.get("chieftain") == "Chieftain"
+    yield
 
-    def test_alias_atht_resolves_to_blinder(self) -> None:
-        assert name_mappings.get("atht") == "Blinder"
-
-    def test_alias_rocket_ac_resolves_to_rac(self) -> None:
-        assert name_mappings.get("rocket ac") == "RAC"
-
-    def test_list_of_products_matches_products_keys(self) -> None:
-        assert set(list_of_products) == set(Products.keys())
+    gui.selected_products.clear()
+    gui.selected_products.extend(original_selected_products)
+    gui.recipe_combo_tags.clear()
+    gui.recipe_combo_tags.update(original_recipe_combo_tags)
+    gui._output_font = original_output_font
+    gui._output_font_bold = original_output_font_bold
 
 
-# ---------------------------------------------------------------------------
-# Calculation correctness (mirrors TestMainLoop scenarios)
-# ---------------------------------------------------------------------------
+def test_add_product_callback_adds_valid_selection() -> None:
+    values = {"product_combo": "Outlaw", "qty_input": 2}
 
-class TestGuiCalculation:
-    """
-    Each test patches builtins.print so calculate_total_resources / get_materials
-    don't pollute test output, then checks the return values and captured calls.
-    """
+    with patch("gui.dpg.get_value", side_effect=lambda tag: values[tag]):
+        with patch("gui.refresh_selection_list") as mock_refresh_selection_list:
+            gui.add_product_callback()
 
-    @patch("builtins.print")
-    def test_single_product_no_materials_flag(self, mock_print: MagicMock) -> None:
-        """Mirrors: single_product_no_materials — Outlaw x2, no materials toggle."""
-        selections = [("Outlaw", 2)]
-        result = calculate_total_resources(selections, Products)
-        assert isinstance(result, dict)
-        assert len(result) > 0
-        calls = [str(c) for c in mock_print.call_args_list]
-        assert any("Outlaw" in c for c in calls)
+    assert gui.selected_products == [("Outlaw", 2)]
+    mock_refresh_selection_list.assert_called_once_with()
 
-    @patch("builtins.print")
-    def test_single_product_with_materials(self, mock_print: MagicMock) -> None:
-        """Mirrors: single_product_with_materials — Chieftain x1."""
-        selections = [("Chieftain", 1)]
-        basic = calculate_total_resources(selections, Products)
-        mats = get_materials(selections, Products)
-        assert isinstance(basic, dict) and len(basic) > 0
-        assert isinstance(mats, dict) and len(mats) > 0
 
-    @patch("builtins.print")
-    def test_case_insensitive_selection(self, mock_print: MagicMock) -> None:
-        """Mirrors: case_insensitive_selection — resolve 'outlaw' then calc x3."""
-        canonical = name_mappings.get("outlaw")
-        assert canonical == "Outlaw"
-        result = calculate_total_resources([(canonical, 3)], Products)
-        assert len(result) > 0
-        calls = [str(c) for c in mock_print.call_args_list]
-        assert any("Outlaw" in c for c in calls)
+def test_refresh_selection_list_renders_selected_products() -> None:
+    gui.selected_products.extend([("Outlaw", 2), ("Chieftain", 1)])
 
-    @patch("builtins.print")
-    def test_multiple_products(self, mock_print: MagicMock) -> None:
-        """Mirrors: multiple_products — Outlaw x2 + Chieftain x3."""
-        selections = [("Outlaw", 2), ("Chieftain", 3)]
-        result = calculate_total_resources(selections, Products)
-        assert len(result) > 0
-        calls = [str(c) for c in mock_print.call_args_list]
-        assert any("Outlaw" in c for c in calls)
-        assert any("Chieftain" in c for c in calls)
+    with patch("gui.dpg.delete_item") as mock_delete_item:
+        with patch("gui.dpg.add_text") as mock_add_text:
+            gui.refresh_selection_list()
 
-    @patch("builtins.print")
-    def test_accumulate_same_product(self, mock_print: MagicMock) -> None:
-        """Mirrors: accumulate_same_product — Outlaw x2 then Outlaw x3."""
-        selections = [("Outlaw", 2), ("Outlaw", 3)]
-        result = calculate_total_resources(selections, Products)
-        assert len(result) > 0
-        calls = [str(c) for c in mock_print.call_args_list]
-        assert sum(1 for c in calls if "Outlaw" in c) == 2
+    mock_delete_item.assert_called_once_with("selection_list_panel", children_only=True)
+    mock_add_text.assert_has_calls(
+        [
+            call("  2x  Outlaw", parent="selection_list_panel"),
+            call("  1x  Chieftain", parent="selection_list_panel"),
+        ]
+    )
 
-    @patch("builtins.print")
-    def test_alias_selection_atht(self, mock_print: MagicMock) -> None:
-        """Mirrors: alias_selection — 'atht' → Blinder x1."""
-        canonical = name_mappings.get("atht")
-        assert canonical == "Blinder"
-        assert canonical in Products
-        result = calculate_total_resources([(canonical, 1)], Products)
-        assert len(result) > 0
-        calls = [str(c) for c in mock_print.call_args_list]
-        assert any("Blinder" in c for c in calls)
 
-    @patch("builtins.print")
-    def test_alias_selection_rac(self, mock_print: MagicMock) -> None:
-        """Mirrors: alias_selection_rac — 'rocket ac' → RAC x1."""
-        canonical = name_mappings.get("rocket ac")
-        assert canonical == "RAC"
-        assert canonical in Products
-        result = calculate_total_resources([(canonical, 1)], Products)
-        assert len(result) > 0
+def test_clear_list_callback_clears_selected_products() -> None:
+    gui.selected_products.extend([("Outlaw", 2), ("Chieftain", 1)])
 
-    @patch("builtins.print")
-    def test_resources_scale_with_quantity(self, mock_print: MagicMock) -> None:
-        """Basic sanity: doubling quantity doubles every resource value."""
-        r1 = calculate_total_resources([("Outlaw", 1)], Products)
-        r2 = calculate_total_resources([("Outlaw", 2)], Products)
-        for key in r1:
-            assert pytest.approx(r2[key]) == r1[key] * 2
+    with patch("gui.refresh_selection_list") as mock_refresh_selection_list:
+        gui.clear_list_callback()
 
-    @patch("builtins.print")
-    def test_get_materials_returns_dict(self, mock_print: MagicMock) -> None:
-        """get_materials must return a non-empty dict for any valid product."""
-        result = get_materials([("Chieftain", 1)], Products)
-        assert isinstance(result, dict)
-        assert len(result) > 0
+    assert gui.selected_products == []
+    mock_refresh_selection_list.assert_called_once_with()
+
+
+def test_emit_lines_formats_product_lines() -> None:
+    captured = "Outlaw x2: {'Salvage': 500}\nSummary line"
+
+    with patch("gui._append_product_line") as mock_append_product_line:
+        with patch("gui.append_output") as mock_append_output:
+            gui._emit_lines(captured)
+
+    mock_append_product_line.assert_called_once_with("Outlaw", 2, "{'Salvage': 500}")
+    mock_append_output.assert_called_once_with("Summary line")
+
+
+def test_run_calculation_callback_emits_happy_path_output() -> None:
+    gui.selected_products.extend([("Outlaw", 2)])
+
+    def fake_calculate_total_resources(
+        user_selections: list[tuple[str, int]],
+        products: dict[str, object],
+    ) -> dict[str, float]:
+        assert user_selections == [("Outlaw", 2)]
+        assert "Outlaw" in products
+        builtins.print("Outlaw x2: {'Salvage': 500, 'Coal': 10}")
+        return {"Salvage": 500.0, "Coal": 10.0}
+
+    def fake_get_materials(
+        user_selections: list[tuple[str, int]],
+        products: dict[str, object],
+    ) -> dict[str, float]:
+        assert user_selections == [("Outlaw", 2)]
+        assert "Outlaw" in products
+        builtins.print("Outlaw x2: {'Cmat': 30}")
+        return {"Cmat": 30.0}
+
+    with patch("gui.calculate_total_resources", side_effect=fake_calculate_total_resources):
+        with patch("gui.get_materials", side_effect=fake_get_materials):
+            with patch("gui.append_output") as mock_append_output:
+                with patch("gui._emit_lines") as mock_emit_lines:
+                    with patch("gui._append_total_line") as mock_append_total_line:
+                        gui.run_calculation_callback()
+
+    assert mock_append_output.call_args_list == [
+        call("------------------------------------------------------------"),
+        call("Running: [('Outlaw', 2)]"),
+        call(""),
+        call(""),
+        call("--- Facility Materials breakdown ---"),
+        call(""),
+    ]
+    assert mock_emit_lines.call_args_list == [
+        call("Outlaw x2: {'Salvage': 500, 'Coal': 10}\n"),
+        call("Outlaw x2: {'Cmat': 30}\n"),
+    ]
+    assert mock_append_total_line.call_args_list == [
+        call("Total basic resources", "{'Salvage': 500, 'Coal': 10}"),
+        call("Total facility materials", "{'Cmat': 30}"),
+    ]
+
+
+def test_save_recipes_callback_updates_changed_recipe() -> None:
+    class DummyMaterial:
+        recipes = {
+            "Old Recipe": {"Coal": 1.0},
+            "New Recipe": {"Coal": 2.0},
+        }
+        cost = recipes["Old Recipe"]
+        current_recipe = "Old Recipe"
+
+        @classmethod
+        def set_recipe(cls, recipe_name: str) -> None:
+            if recipe_name not in cls.recipes:
+                raise ValueError(f"Unknown recipe '{recipe_name}' for {cls.__name__}")
+            cls.cost = cls.recipes[recipe_name]
+            cls.current_recipe = recipe_name
+
+    gui.recipe_combo_tags["Coke"] = "recipe_combo_Coke"
+
+    with patch("gui.get_switchable_materials", return_value={"Coke": DummyMaterial}):
+        with patch("gui.dpg.does_item_exist", return_value=True):
+            with patch("gui.dpg.get_value", return_value="New Recipe"):
+                with patch("gui.append_output") as mock_append_output:
+                    gui.save_recipes_callback()
+
+    assert DummyMaterial.current_recipe == "New Recipe"
+    assert mock_append_output.call_args_list == [
+        call("Recipes updated:"),
+        call("  Coke: New Recipe"),
+    ]
