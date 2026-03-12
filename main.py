@@ -15,13 +15,20 @@ def display_menu(warden: dict[str, Any], colonial: dict[str, Any], neutral: dict
     print("\n--- Available Vehicles ---")
     
     print("\nWarden:")
-    print(", ".join(sorted(warden.keys())))
+    warden_list = list(warden.keys())
+    for count in range(0, len(warden_list), 6):
+        print(", ".join(warden_list[count:count+6]))
+        
     
     print("\nColonial:")
-    print(", ".join(sorted(colonial.keys())))
+    colonial_list = list(colonial.keys())
+    for count in range(0, len(colonial_list), 6):
+        print(", ".join(colonial_list[count:count+6]))
     
     print("\nNeutral / All:")
-    print(", ".join(sorted(neutral.keys())))
+    neutral_list = list(neutral.keys())
+    for count in range(0, len(neutral_list), 6):
+        print(", ".join(neutral_list[count:count+6]))
     print("\n--------------------------")
 
 
