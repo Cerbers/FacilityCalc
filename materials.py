@@ -86,12 +86,11 @@ class EnrichedOil(Material):
 
 class Steel(Material):
     recipes = {
-        "Default": {"PCmat": 3.0, "Coke": 125.0, "Sulfur": 60.0},
         "Heavy Oil": {"PCmat": 3.0, "Coke": 200.0, "Sulfur": 65.0},
         "Enriched Oil": {"PCmat": 3.0, "Coke": 125.0, "EnrichedOil": 1.0},
     }
-    cost = recipes["Default"]
-    current_recipe = "Default"
+    cost = recipes["Enriched Oil"]
+    current_recipe = "Enriched Oil"
 
 class A5(Material):
     cost = {

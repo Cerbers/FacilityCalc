@@ -2,7 +2,7 @@ import pytest
 import json
 from unittest.mock import patch, mock_open
 from materials import (
-    Material, Coke, Cmat, PCmat, Steel, A1, A3, A4, EnrichedOil,
+    Material, Coke, Cmat, PCmat, Steel, A1, A3, A4, A5, EnrichedOil,
     AircraftMechanicalPartsSmall, AircraftMechanicalPartsLarge,
     AircraftEngineSmall, AircraftEngineLarge,
     get_switchable_materials, load_recipe_preferences
@@ -15,13 +15,13 @@ def reset_recipes():
     Coke.set_recipe("Coke Furnace")
     Cmat.set_recipe("Metal Press")
     PCmat.set_recipe("Recycler")
-    Steel.set_recipe("Default")
+    Steel.set_recipe("Enriched Oil")
     EnrichedOil.set_recipe("Oil Refinery")
     yield
     Coke.set_recipe("Coke Furnace")
     Cmat.set_recipe("Metal Press")
     PCmat.set_recipe("Recycler")
-    Steel.set_recipe("Default")
+    Steel.set_recipe("Enriched Oil")
     EnrichedOil.set_recipe("Oil Refinery")
 
 
@@ -71,29 +71,47 @@ def test_a1_basic_resources(resource: str, expected_amount: float) -> None:
 
 # === Recipe system tests ===
 
-def test_set_recipe_changes_cost() -> None:
-    """Test that set_recipe swaps the cost dict."""
-    Coke.set_recipe("Coal Refinery Basic")
-    assert Coke.cost == {"Coal": 1.11}
+@pytest.mark.parametrize(
+    ("recipe_name", "expected_cost"),
+    [
+        ("Coal Refinery Basic", {"Coal": 1.11}),
+        ("Advanced Coal Liquefier", {"Coal": 1.15}),
+    ],
+)
+def test_set_recipe_changes_cost(recipe_name: str, expected_cost: dict[str, float]) -> None:
+    Coke.set_recipe(recipe_name)
+
+    assert Coke.cost == expected_cost
+    assert Coke.current_recipe == recipe_name
 
 def test_set_recipe_invalid_name() -> None:
-    """Test that set_recipe raises ValueError for unknown recipe."""
-    with pytest.raises(ValueError, match="Unknown recipe"):
+    original_cost = Coke.cost.copy()
+    original_recipe = Coke.current_recipe
+
+    with pytest.raises(ValueError, match="Unknown recipe 'Nonexistent Recipe' for Coke"):
         Coke.set_recipe("Nonexistent Recipe")
 
+    assert Coke.cost == original_cost
+    assert Coke.current_recipe == original_recipe
+
 def test_set_recipe_updates_current_recipe() -> None:
-    """Test that current_recipe tracks the active recipe name."""
     Coke.set_recipe("Coal Refinery Basic")
     assert Coke.current_recipe == "Coal Refinery Basic"
 
-def test_set_recipe_on_material_without_recipes() -> None:
-    """Test that set_recipe raises ValueError on materials without recipes."""
-    with pytest.raises(ValueError, match="Unknown recipe"):
-        A1.set_recipe("anything")
+    Coke.set_recipe("Coke Furnace")
+    assert Coke.current_recipe == "Coke Furnace"
 
-def test_material_without_recipes_has_empty_recipes() -> None:
-    """Test that materials without alt recipes have empty recipes dict."""
-    assert A1.recipes == {}
+@pytest.mark.parametrize("material_class", [A1, A3, A4, A5])
+def test_set_recipe_on_material_without_recipes(material_class: type[Material]) -> None:
+    with pytest.raises(ValueError, match=rf"Unknown recipe 'anything' for {material_class.__name__}"):
+        material_class.set_recipe("anything")
+
+    assert material_class.cost
+    assert material_class.current_recipe == ""
+
+@pytest.mark.parametrize("material_class", [A1, A3, A4, A5])
+def test_material_without_recipes_has_empty_recipes(material_class: type[Material]) -> None:
+    assert material_class.recipes == {}
 
 
 # === get_switchable_materials tests ===
@@ -112,7 +130,9 @@ def test_get_switchable_materials_excludes_simple_materials() -> None:
     switchable = get_switchable_materials()
     assert "A1" not in switchable
     assert "A2" not in switchable
+    assert "A3" not in switchable
     assert "A4" not in switchable
+    assert "A5" not in switchable
 
 
 # === Recipe-specific resolution tests ===
