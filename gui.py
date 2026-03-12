@@ -46,7 +46,7 @@ def run_calculation_callback() -> None:
         append_output("[!] No products in the list. Add at least one product first.")
         return
 
-    append_output("─" * 60)
+    append_output("-" * 60)
     append_output(f"Running: {[(name, qty) for name, qty in selected_products]}")
     append_output("")
 
