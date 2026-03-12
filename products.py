@@ -2,7 +2,7 @@ from typing import Any
 import json
 import os
 import materials as mats
-from functions import iterate_and_multiply_keys, calculate_total_basic_resources
+from functions import calculate_total_basic_resources
 
 
 class Prod:

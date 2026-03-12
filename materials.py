@@ -1,7 +1,7 @@
 from typing import Type
 import json
 import os
-from functions import iterate_and_multiply_keys, calculate_total_basic_resources
+from functions import calculate_total_basic_resources
 
 basic_resources: tuple[str, ...] = ("Salvage", "Coal", "Sulfur", "Rare Metals", "Components") # reminder of what the objects are breakdowned to
 
@@ -241,7 +241,7 @@ def load_recipe_preferences() -> None:
             prefs = json.load(f)
 
         if not isinstance(prefs, dict):
-            print(f"Warning: preferences file is not a valid JSON object, using defaults")
+            print("Warning: preferences file is not a valid JSON object, using defaults")
             return
 
         for mat_name, recipe_name in prefs.items():

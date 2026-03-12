@@ -324,7 +324,7 @@
     },
     "Stygian": {
         "faction": "colonial",
-        "names": ["Stygian", "stygian"],
+        "names": ["Stygian"],
         "cost": {
             "Steel": 15.0,
             "A2": 20.0,
@@ -361,7 +361,7 @@
     },
     "Ballista": {
         "faction": "colonial",
-        "names": ["Ballista", "ballista"],
+        "names": ["Ballista"],
         "cost": {
             "PCmat": 15.0,
             "A2": 15.0
