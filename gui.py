@@ -26,13 +26,30 @@ def append_output(text: str) -> None:
 
 
 def _append_product_line(name: str, qty: int, data: str) -> None:
-    """Render a product result line with the product name in bold."""
+    """Render a product result line with bigger bold name (and nice color)."""
     with dpg.group(horizontal=True, parent="output_panel"):
-        bold_item = dpg.add_text(f"{name} x{qty}")
-        font = _output_font_bold if _output_font_bold is not None else _output_font
-        if font is not None:
-            dpg.bind_item_font(bold_item, font)
-        dpg.add_text(f": {data}", wrap=0)
+        bold_item = dpg.add_text(
+            f"{name} x{qty}: ",
+            color=(100, 220, 255, 255)   # nice cyan — change numbers if you want another color
+        )
+        if _output_font_bold is not None:
+            dpg.bind_item_font(bold_item, _output_font_bold)
+        
+        dpg.add_text(f"{data}", wrap=0)
+    dpg.set_y_scroll("output_panel", dpg.get_y_scroll_max("output_panel"))
+
+
+def _append_total_line(label: str, data: str) -> None:
+    """Render Total lines slightly bigger + rust color (label only)."""
+    with dpg.group(horizontal=True, parent="output_panel"):
+        title_item = dpg.add_text(
+            f"{label}:  ",
+            color=(235, 115, 35, 255)   # Warm rust — change RGB if you want another shade
+        )
+        if _output_font_bold is not None:
+            dpg.bind_item_font(title_item, _output_font_bold)
+        
+        dpg.add_text(f"{data}", wrap=0)
     dpg.set_y_scroll("output_panel", dpg.get_y_scroll_max("output_panel"))
 
 
@@ -84,7 +101,7 @@ def run_calculation_callback() -> None:
         total = calculate_total_resources(selected_products, Products)
     _emit_lines(buf.getvalue())
 
-    append_output(f"Total basic resources:  { {k: int(v) for k, v in total.items()} }")
+    _append_total_line("Total basic resources", f"{ {k: int(v) for k, v in total.items()} }")
 
     # Capture per-product materials printed by get_materials
     buf2 = io.StringIO()
@@ -93,7 +110,7 @@ def run_calculation_callback() -> None:
     append_output("")
     append_output("--- Facility Materials breakdown ---")
     _emit_lines(buf2.getvalue())
-    append_output(f"Total facility materials: { {k: int(v) for k, v in total_mats.items()} }")
+    _append_total_line("Total facility materials", f"{ {k: int(v) for k, v in total_mats.items()} }")
     append_output("")
 
 
@@ -165,7 +182,7 @@ def _load_fonts() -> None:
         except Exception:
             pass
         try:
-            _output_font_bold = dpg.add_font("C:/Windows/Fonts/consolab.ttf", 13)
+            _output_font_bold = dpg.add_font("C:/Windows/Fonts/consolab.ttf", 15)  # ← bigger & bold
         except Exception:
             pass
 
