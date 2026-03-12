@@ -211,15 +211,15 @@ materials_map: dict[str, Type[Material]] = {
     "NavalPlate": NavalShellPlating,
     "NavalTurbine": NavalTurbine,
     "NavalHull": NavalHullSegment,
-    "CP": ConstructionPart,
-    "SP": StructurePart,
-    "SCP": StormCannonPart,
-    "ICP": IntelCenterPart,
-    "UFP": UndergroundFortressPart,
-    "AMPs": AircraftMechanicalPartsSmall,
-    "AMPl": AircraftMechanicalPartsLarge,
-    "AEs": AircraftEngineSmall,
-    "AEl": AircraftEngineLarge
+    "ConstructionPart": ConstructionPart,
+    "StructurePart": StructurePart,
+    "StormCannonPart": StormCannonPart,
+    "IntelCenterPart": IntelCenterPart,
+    "UndergroundFortressPart": UndergroundFortressPart,
+    "AircraftMechanicalPartsSmall": AircraftMechanicalPartsSmall,
+    "AircraftMechanicalPartsLarge": AircraftMechanicalPartsLarge,
+    "AircraftEngineSmall": AircraftEngineSmall,
+    "AircraftEngineLarge": AircraftEngineLarge
 }
 
 def get_switchable_materials() -> dict[str, Type[Material]]:

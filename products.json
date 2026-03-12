@@ -110,27 +110,27 @@
         "faction": "all",
         "names": ["Storm Cannon", "stormcannon", "sc"],
         "cost": {
-            "CP": 1.0,
-            "SP": 1.0,
-            "SCP": 1.0
+            "ConstructionPart": 1.0,
+            "StructurePart": 1.0,
+            "StormCannonPart": 1.0
         }
     },
     "Underground Fortress": {
         "faction": "all",
         "names": ["Underground Fortress", "uf"],
         "cost": {
-            "CP": 1.0,
-            "SP": 1.0,
-            "UFP": 1.0
+            "ConstructionPart": 1.0,
+            "StructurePart": 1.0,
+            "UndergroundFortressPart": 1.0
         }
     },
     "Intel Center": {
         "faction": "all",
         "names": ["Intel Center", "intelcenter", "ic"],
         "cost": {
-            "CP": 1.0,
-            "SP": 1.0,
-            "ICP": 1.0
+            "ConstructionPart": 1.0,
+            "StructurePart": 1.0,
+            "IntelCenterPart": 1.0
         }
     },
     "Frigate": {
@@ -261,8 +261,8 @@
             "A2": 145.0,
             "A3": 40.0,
             "RareAlloy": 2.0,
-            "AEs": 1.0,
-            "AMPs": 5.0
+            "AircraftEngineSmall": 1.0,
+            "AircraftMechanicalPartsSmall": 5.0
         }
     },
     "Austringer Man-O-War": {
@@ -275,8 +275,8 @@
             "A3": 20.0,
             "A4": 20.0,
             "RareAlloy": 5.0,
-            "AEs": 3.0,
-            "AMPs": 5.0
+            "AircraftEngineSmall": 3.0,
+            "AircraftMechanicalPartsSmall": 5.0
         }
     },
     "Harbinger": {
@@ -287,8 +287,8 @@
             "A1": 200.0,
             "A4": 100.0,
             "RareAlloy": 2.0,
-            "AEs": 1.0,
-            "AMPs": 5.0
+            "AircraftEngineSmall": 1.0,
+            "AircraftMechanicalPartsSmall": 5.0
         }
     },
     "Tulka Welkinrive": {
@@ -300,8 +300,8 @@
             "A4": 40.0,
             "A5": 65.0,
             "RareAlloy": 12.0,
-            "AEl": 2.0,
-            "AMPl": 9.0
+            "AircraftEngineLarge": 2.0,
+            "AircraftMechanicalPartsLarge": 9.0
         }
     },
     "Starbreaker": {
